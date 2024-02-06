@@ -1,66 +1,30 @@
+using System;
 using System.Collections.Generic;
 using VirtoCommerce.Platform.Core.Settings;
 
-namespace VirtoCommerce.Skyflow.Core;
-
-public static class ModuleConstants
+namespace VirtoCommerce.Skyflow.Core
 {
-    public static class Security
+    public static class ModuleConstants
     {
-        public static class Permissions
+        public static class Settings
         {
-            public const string Access = "Skyflow:access";
-            public const string Create = "Skyflow:create";
-            public const string Read = "Skyflow:read";
-            public const string Update = "Skyflow:update";
-            public const string Delete = "Skyflow:delete";
-
-            public static string[] AllPermissions { get; } =
+            public static class General
             {
-                Access,
-                Create,
-                Read,
-                Update,
-                Delete,
-            };
-        }
-    }
+                public static IEnumerable<SettingDescriptor> AllSettings
+                {
+                    get
+                    {
+                        return Array.Empty<SettingDescriptor>();
+                    }
+                }
+            }
 
-    public static class Settings
-    {
-        public static class General
-        {
-            public static SettingDescriptor SkyflowEnabled { get; } = new()
-            {
-                Name = "Skyflow.SkyflowEnabled",
-                GroupName = "Skyflow|General",
-                ValueType = SettingValueType.Boolean,
-                DefaultValue = false,
-            };
-
-            public static SettingDescriptor SkyflowPassword { get; } = new()
-            {
-                Name = "Skyflow.SkyflowPassword",
-                GroupName = "Skyflow|Advanced",
-                ValueType = SettingValueType.SecureString,
-                DefaultValue = "qwerty",
-            };
-
-            public static IEnumerable<SettingDescriptor> AllGeneralSettings
+            public static IEnumerable<SettingDescriptor> AllSettings
             {
                 get
                 {
-                    yield return SkyflowEnabled;
-                    yield return SkyflowPassword;
+                    return General.AllSettings;
                 }
-            }
-        }
-
-        public static IEnumerable<SettingDescriptor> AllSettings
-        {
-            get
-            {
-                return General.AllGeneralSettings;
             }
         }
     }
