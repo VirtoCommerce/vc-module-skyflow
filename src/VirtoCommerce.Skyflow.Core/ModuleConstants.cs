@@ -10,7 +10,7 @@ namespace VirtoCommerce.Skyflow.Core
         {
             public static class General
             {
-                public static IEnumerable<SettingDescriptor> AllSettings
+                public static IEnumerable<SettingDescriptor> AllGeneralSettings
                 {
                     get
                     {
@@ -23,7 +23,7 @@ namespace VirtoCommerce.Skyflow.Core
             {
                 get
                 {
-                    return General.AllSettings;
+                    return General.AllGeneralSettings;
                 }
             }
         }
