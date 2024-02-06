@@ -29,7 +29,7 @@ public class Module : IModule, IHasConfiguration
         var paymentMethodsRegistrar = appBuilder.ApplicationServices.GetRequiredService<IPaymentMethodsRegistrar>();
         paymentMethodsRegistrar.RegisterPaymentMethod<SkyflowPaymentMethod>();
         //Associate the settings with the particular payment method
-        settingsRegistrar.RegisterSettingsForType(ModuleConstants.Settings.General.AllSettings, nameof(SkyflowPaymentMethod));
+        settingsRegistrar.RegisterSettingsForType(ModuleConstants.Settings.AllSettings, nameof(SkyflowPaymentMethod));
     }
 
     public void Uninstall()
