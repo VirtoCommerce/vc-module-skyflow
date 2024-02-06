@@ -1,0 +1,28 @@
+{
+  "Skyflow": {
+    "blades": {
+      "hello-world": {
+        "title": "Hello world blade"
+      }
+    }
+  },
+  "permissions": {
+    "Skyflow:access": "Open Skyflow menu",
+    "Skyflow:create": "Create Skyflow related data",
+    "Skyflow:read": "View Skyflow related data",
+    "Skyflow:update": "Update Skyflow related data",
+    "Skyflow:delete": "Delete Skyflow related data"
+  },
+  "settings": {
+    "Skyflow": {
+      "SkyflowEnabled": {
+        "title": "Skyflow Enabled",
+        "description": "Skyflow Enabled setting"
+      },
+      "SkyflowPassword": {
+        "title": "Skyflow Password",
+        "description": "Skyflow Password setting"
+      }
+    }
+  }
+}

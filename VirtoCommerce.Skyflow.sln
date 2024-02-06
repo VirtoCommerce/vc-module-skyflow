@@ -1,0 +1,64 @@
+
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.2.32630.192
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{DE724EB1-A92C-45DB-A32E-FEDEF920F936}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VirtoCommerce.Skyflow.Web", "src\VirtoCommerce.Skyflow.Web\VirtoCommerce.Skyflow.Web.csproj", "{7B5D6FB2-91F4-4967-85BC-C228989402E2}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VirtoCommerce.Skyflow.Data", "src\VirtoCommerce.Skyflow.Data\VirtoCommerce.Skyflow.Data.csproj", "{2B6180F3-14E4-420B-A762-F1A6A5EE448C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VirtoCommerce.Skyflow.Core", "src\VirtoCommerce.Skyflow.Core\VirtoCommerce.Skyflow.Core.csproj", "{83316588-1E5C-43FB-9BF5-46409B3ABCD3}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{8F3381A9-C371-478D-97AA-5DB239C9F542}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VirtoCommerce.Skyflow.Tests", "tests\VirtoCommerce.Skyflow.Tests\VirtoCommerce.Skyflow.Tests.csproj", "{564DE2F9-721E-499C-8ABA-9C7C7D00DE5F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{9CC2AA1B-9256-4A7D-97C6-FE52C04ED5EC}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+		.gitignore = .gitignore
+		Directory.Build.props = Directory.Build.props
+		LICENSE = LICENSE
+		module.ignore = module.ignore
+		README.md = README.md
+		VirtoCommerce.Skyflow.sln.DotSettings = VirtoCommerce.Skyflow.sln.DotSettings
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7B5D6FB2-91F4-4967-85BC-C228989402E2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7B5D6FB2-91F4-4967-85BC-C228989402E2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7B5D6FB2-91F4-4967-85BC-C228989402E2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7B5D6FB2-91F4-4967-85BC-C228989402E2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2B6180F3-14E4-420B-A762-F1A6A5EE448C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2B6180F3-14E4-420B-A762-F1A6A5EE448C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2B6180F3-14E4-420B-A762-F1A6A5EE448C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2B6180F3-14E4-420B-A762-F1A6A5EE448C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{83316588-1E5C-43FB-9BF5-46409B3ABCD3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{83316588-1E5C-43FB-9BF5-46409B3ABCD3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{83316588-1E5C-43FB-9BF5-46409B3ABCD3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{83316588-1E5C-43FB-9BF5-46409B3ABCD3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{564DE2F9-721E-499C-8ABA-9C7C7D00DE5F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{564DE2F9-721E-499C-8ABA-9C7C7D00DE5F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{564DE2F9-721E-499C-8ABA-9C7C7D00DE5F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{564DE2F9-721E-499C-8ABA-9C7C7D00DE5F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{7B5D6FB2-91F4-4967-85BC-C228989402E2} = {DE724EB1-A92C-45DB-A32E-FEDEF920F936}
+		{2B6180F3-14E4-420B-A762-F1A6A5EE448C} = {DE724EB1-A92C-45DB-A32E-FEDEF920F936}
+		{83316588-1E5C-43FB-9BF5-46409B3ABCD3} = {DE724EB1-A92C-45DB-A32E-FEDEF920F936}
+		{564DE2F9-721E-499C-8ABA-9C7C7D00DE5F} = {8F3381A9-C371-478D-97AA-5DB239C9F542}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {41A8B07F-071C-4CD6-AB4B-EEBB8910716A}
+	EndGlobalSection
+EndGlobal
