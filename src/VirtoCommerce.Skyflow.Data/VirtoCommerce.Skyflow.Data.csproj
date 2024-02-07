@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
   </PropertyGroup>
@@ -9,6 +9,7 @@
   <ItemGroup>
     <PackageReference Include="JWT" Version="10.1.1" />
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All" />
+    <PackageReference NoWarn="NU1902" Include="System.IdentityModel.Tokens.Jwt" Version="7.0.3" />
     <PackageReference Include="VirtoCommerce.OrdersModule.Core" Version="3.800.0" />
     <PackageReference Include="VirtoCommerce.PaymentModule.Core" Version="3.800.0" />
     <PackageReference Include="VirtoCommerce.Platform.Data" Version="3.800.0" />
