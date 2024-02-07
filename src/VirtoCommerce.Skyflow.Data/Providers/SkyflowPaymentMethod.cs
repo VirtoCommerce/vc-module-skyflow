@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Collections.Specialized;
 using VirtoCommerce.OrdersModule.Core.Model;
 using VirtoCommerce.PaymentModule.Core.Model;
@@ -16,11 +15,7 @@ namespace VirtoCommerce.Skyflow.Data.Providers
             {
                 IsSuccess = true,
                 NewPaymentStatus = PaymentStatus.Pending,
-                PublicParameters = new Dictionary<string, string>
-                {
-                    {"accessToken", tokenResponse.AccessToken},
-                    {"tokenType", tokenResponse.TokenType}
-                }
+                PublicParameters = tokenResponse
             };
 
             var payment = (PaymentIn)request.Payment;
