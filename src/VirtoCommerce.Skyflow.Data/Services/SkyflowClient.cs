@@ -32,11 +32,11 @@ namespace VirtoCommerce.Skyflow.Data.Services
             var certificate = request.CreateSelfSigned(notBefore, notAfter);
             var signedToken = JwtBuilder.Create()
                 .WithAlgorithm(new RS256Algorithm(certificate))
-                .AddClaim("iss", options.Value.ClientID)
-                .AddClaim("key", options.Value.KeyID)
-                .AddClaim("aud", options.Value.TokenURI)
+                .AddClaim("iss", options.Value.ClientId)
+                .AddClaim("key", options.Value.KeyId)
+                .AddClaim("aud", options.Value.TokenUri)
                 .AddClaim("exp", DateTimeOffset.UtcNow.AddHours(1).ToUnixTimeSeconds())
-                .AddClaim("sub", options.Value.ClientID)
+                .AddClaim("sub", options.Value.ClientId)
                 .Encode();
 
             using var httpClient = new HttpClient();
@@ -48,7 +48,7 @@ namespace VirtoCommerce.Skyflow.Data.Services
             var body = JsonConvert.SerializeObject(payload);
             var content = new StringContent(body, Encoding.UTF8, "application/json");
 
-            var response = await httpClient.PostAsync(options.Value.TokenURI, content);
+            var response = await httpClient.PostAsync(options.Value.TokenUri, content);
             var responseContent = await response.Content.ReadFromJsonAsync<SkyflowBearerTokenResponse>();
             return responseContent;
         }
@@ -58,7 +58,7 @@ namespace VirtoCommerce.Skyflow.Data.Services
             const string beginKey = "-----BEGIN PRIVATE KEY-----";
             const string endKey = "-----END PRIVATE KEY-----";
             var result = options.Value.PrivateKey
-                .Substring(beginKey.Length, options.Value.PrivateKey.Length - beginKey.Length - endKey.Length)
+                .Substring(beginKey.Length, options.Value.PrivateKey.Length - beginKey.Length - endKey.Length - 1)
                 .Replace("\n", "");
             return result;
         }

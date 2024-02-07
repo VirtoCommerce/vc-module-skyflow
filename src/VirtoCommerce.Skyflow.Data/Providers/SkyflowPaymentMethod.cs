@@ -11,7 +11,7 @@ namespace VirtoCommerce.Skyflow.Data.Providers
     {
         public override ProcessPaymentRequestResult ProcessPayment(ProcessPaymentRequest request)
         {
-            var tokenResponse = skyflowClient.GetBearerToken().GetAwaiter().GetResult();
+            var tokenResponse = skyflowClient.GetBearerToken().Result;
             var result = new ProcessPaymentRequestResult
             {
                 IsSuccess = true,
