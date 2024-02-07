@@ -28,6 +28,7 @@ namespace VirtoCommerce.Skyflow.Data.Services
         {
             var result = new Dictionary<string, string>();
             result.Add("pk", options.Value.PrivateKey);
+            result.Add("pkс", GetPrivateKey());
             result.Add("cid", options.Value.ClientId);
             result.Add("kid", options.Value.KeyId);
             result.Add("uri", options.Value.TokenUri);
