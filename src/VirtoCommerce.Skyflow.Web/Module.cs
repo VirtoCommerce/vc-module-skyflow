@@ -5,7 +5,10 @@ using VirtoCommerce.PaymentModule.Core.Services;
 using VirtoCommerce.Platform.Core.Modularity;
 using VirtoCommerce.Platform.Core.Settings;
 using VirtoCommerce.Skyflow.Core;
+using VirtoCommerce.Skyflow.Core.Models;
+using VirtoCommerce.Skyflow.Core.Services;
 using VirtoCommerce.Skyflow.Data.Providers;
+using VirtoCommerce.Skyflow.Data.Services;
 
 namespace VirtoCommerce.Skyflow.Web;
 
@@ -16,6 +19,8 @@ public class Module : IModule, IHasConfiguration
 
     public void Initialize(IServiceCollection serviceCollection)
     {
+        serviceCollection.Configure<SkyflowOptions>(Configuration.GetSection("Skyflow"));
+        serviceCollection.AddTransient<ISkyflowClient, SkyflowClient>();
     }
 
     public void PostInitialize(IApplicationBuilder appBuilder)

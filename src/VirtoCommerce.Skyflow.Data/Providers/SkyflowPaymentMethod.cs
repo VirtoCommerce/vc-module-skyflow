@@ -1,18 +1,33 @@
+using System.Collections.Generic;
 using System.Collections.Specialized;
+using VirtoCommerce.OrdersModule.Core.Model;
 using VirtoCommerce.PaymentModule.Core.Model;
 using VirtoCommerce.PaymentModule.Model.Requests;
+using VirtoCommerce.Skyflow.Core.Services;
 
 namespace VirtoCommerce.Skyflow.Data.Providers
 {
-    public class SkyflowPaymentMethod : PaymentMethod
+    public class SkyflowPaymentMethod(ISkyflowClient skyflowClient) : PaymentMethod(nameof(SkyflowPaymentMethod))
     {
-        public SkyflowPaymentMethod() : base(nameof(SkyflowPaymentMethod))
-        {
-        }
-
         public override ProcessPaymentRequestResult ProcessPayment(ProcessPaymentRequest request)
         {
-            return new ProcessPaymentRequestResult();
+            var tokenResponse = skyflowClient.GetBearerToken().GetAwaiter().GetResult();
+            var result = new ProcessPaymentRequestResult
+            {
+                IsSuccess = true,
+                NewPaymentStatus = PaymentStatus.Pending,
+                PublicParameters = new Dictionary<string, string>
+                {
+                    {"accessToken", tokenResponse.AccessToken},
+                    {"tokenType", tokenResponse.TokenType}
+                }
+            };
+
+            var payment = (PaymentIn)request.Payment;
+            payment.PaymentStatus = PaymentStatus.Pending;
+            payment.Status = payment.PaymentStatus.ToString();
+
+            return result;
         }
 
         public override PostProcessPaymentRequestResult PostProcessPayment(PostProcessPaymentRequest request)
