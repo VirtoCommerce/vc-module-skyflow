@@ -32,7 +32,9 @@ public class Module : IModule, IHasConfiguration
         settingsRegistrar.RegisterSettings(ModuleConstants.Settings.AllSettings, ModuleInfo.Id);
 
         var paymentMethodsRegistrar = appBuilder.ApplicationServices.GetRequiredService<IPaymentMethodsRegistrar>();
-        paymentMethodsRegistrar.RegisterPaymentMethod<SkyflowPaymentMethod>();
+        paymentMethodsRegistrar.RegisterPaymentMethod(() => new SkyflowPaymentMethod(
+            appBuilder.ApplicationServices.GetService<ISkyflowClient>()
+        ));
         //Associate the settings with the particular payment method
         settingsRegistrar.RegisterSettingsForType(ModuleConstants.Settings.AllSettings, nameof(SkyflowPaymentMethod));
     }
