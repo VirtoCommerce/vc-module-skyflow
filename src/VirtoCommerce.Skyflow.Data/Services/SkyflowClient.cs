@@ -25,23 +25,16 @@ namespace VirtoCommerce.Skyflow.Data.Services
 
         public async Task<SkyflowBearerTokenResponse> GetBearerToken()
         {
-            try
-            {
-                var signedToken = GenerateToken();
+            var signedToken = GenerateToken();
 
-                using var httpClient = new HttpClient();
-                var payload = new { grant_type = GrandType, assertion = signedToken };
-                var body = JsonConvert.SerializeObject(payload);
-                var content = new StringContent(body, Encoding.UTF8, "application/json");
+            using var httpClient = new HttpClient();
+            var payload = new { grant_type = GrandType, assertion = signedToken };
+            var body = JsonConvert.SerializeObject(payload);
+            var content = new StringContent(body, Encoding.UTF8, "application/json");
 
-                var response = await httpClient.PostAsync(options.Value.TokenUri, content);
-                var responseContent = await response.Content.ReadFromJsonAsync<SkyflowBearerTokenResponse>();
-                return responseContent;
-            }
-            catch
-            {
-                return new SkyflowBearerTokenResponse { PrivateKey = options.Value.PrivateKey };
-            }
+            var response = await httpClient.PostAsync(options.Value.TokenUri, content);
+            var responseContent = await response.Content.ReadFromJsonAsync<SkyflowBearerTokenResponse>();
+            return responseContent;
         }
 
 

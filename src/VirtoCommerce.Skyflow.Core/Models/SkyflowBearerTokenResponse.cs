@@ -4,6 +4,5 @@ namespace VirtoCommerce.Skyflow.Core.Models
     {
         public string AccessToken { get; set; }
         public string TokenType { get; set; }
-        public string PrivateKey { get; set; }
     }
 }
