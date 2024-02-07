@@ -94,7 +94,7 @@ namespace VirtoCommerce.Skyflow.Data.Services
             var startIndex = options.Value.PrivateKey.IndexOf(beginKey, StringComparison.InvariantCulture) + beginKey.Length;
             var endIndex = options.Value.PrivateKey.LastIndexOf(endKey, StringComparison.InvariantCulture);
             var result = options.Value.PrivateKey[startIndex..endIndex]
-                .Replace("\n", "").Replace("\\n", "");
+                .Replace("\n", "").Replace("\\n", "").Replace(" ", "");
             return result;
         }
 
