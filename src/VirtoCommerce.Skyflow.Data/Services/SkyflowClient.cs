@@ -57,8 +57,10 @@ namespace VirtoCommerce.Skyflow.Data.Services
         {
             const string beginKey = "-----BEGIN PRIVATE KEY-----";
             const string endKey = "-----END PRIVATE KEY-----";
+            var startIndex = options.Value.PrivateKey.IndexOf(beginKey, StringComparison.InvariantCulture) + beginKey.Length;
+            var endIndex = options.Value.PrivateKey.LastIndexOf(endKey, StringComparison.InvariantCulture);
             var result = options.Value.PrivateKey
-                .Substring(beginKey.Length, options.Value.PrivateKey.Length - beginKey.Length - endKey.Length - 1)
+                .Substring(startIndex, endIndex - startIndex)
                 .Replace("\n", "");
             return result;
         }
