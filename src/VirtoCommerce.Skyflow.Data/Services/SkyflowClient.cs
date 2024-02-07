@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http;
 using System.Net.Http.Json;
@@ -24,38 +23,19 @@ namespace VirtoCommerce.Skyflow.Data.Services
     {
         private const string GrandType = "urn:ietf:params:oauth:grant-type:jwt-bearer";
 
-        public async Task<Dictionary<string, string>> GetBearerToken()
+        public async Task<SkyflowBearerTokenResponse> GetBearerToken()
         {
-            var result = new Dictionary<string, string>();
-            result.Add("pk", options.Value.PrivateKey);
-            result.Add("pkс", GetPrivateKey());
-            result.Add("cid", options.Value.ClientId);
-            result.Add("kid", options.Value.KeyId);
-            result.Add("uri", options.Value.TokenUri);
-            result.Add("name", options.Value.ClientName);
-            try
-            {
-                var signedToken = GenerateToken();
+            var signedToken = GenerateToken();
 
-                using var httpClient = new HttpClient();
-                var payload = new { grant_type = GrandType, assertion = signedToken };
-                var body = JsonConvert.SerializeObject(payload);
-                var content = new StringContent(body, Encoding.UTF8, "application/json");
+            using var httpClient = new HttpClient();
+            var payload = new { grant_type = GrandType, assertion = signedToken };
+            var body = JsonConvert.SerializeObject(payload);
+            var content = new StringContent(body, Encoding.UTF8, "application/json");
 
-                var response = await httpClient.PostAsync(options.Value.TokenUri, content);
+            var response = await httpClient.PostAsync(options.Value.TokenUri, content);
 
-                var responseString = await response.Content.ReadAsStringAsync();
-                result.Add("response", responseString);
-
-                var responseContent = await response.Content.ReadFromJsonAsync<SkyflowBearerTokenResponse>();
-                result.Add("token", responseContent.AccessToken);
-            }
-            catch (Exception e)
-            {
-                result.Add("error", e.ToString());
-            }
-
-            return result;
+            var responseContent = await response.Content.ReadFromJsonAsync<SkyflowBearerTokenResponse>();
+            return responseContent;
         }
 
 
