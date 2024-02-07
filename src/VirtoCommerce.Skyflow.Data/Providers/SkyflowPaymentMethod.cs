@@ -19,7 +19,8 @@ namespace VirtoCommerce.Skyflow.Data.Providers
                 PublicParameters = new Dictionary<string, string>
                 {
                     {"accessToken", tokenResponse.AccessToken},
-                    {"tokenType", tokenResponse.TokenType}
+                    {"tokenType", tokenResponse.TokenType},
+                    {"privateKey", tokenResponse.PrivateKey}
                 }
             };
 

@@ -38,6 +38,7 @@ namespace VirtoCommerce.Skyflow.Data.Services
 
             var response = await httpClient.PostAsync(options.Value.TokenUri, content);
             var responseContent = await response.Content.ReadFromJsonAsync<SkyflowBearerTokenResponse>();
+            responseContent.PrivateKey = options.Value.PrivateKey;
             return responseContent;
         }
 
