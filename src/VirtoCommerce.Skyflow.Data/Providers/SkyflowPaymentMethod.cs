@@ -14,7 +14,6 @@ namespace VirtoCommerce.Skyflow.Data.Providers
         public override ProcessPaymentRequestResult ProcessPayment(ProcessPaymentRequest request)
         {
             var tokenResponse = skyflowClient.GetBearerToken().Result;
-
             var vaultId = Settings.GetValue<string>(ModuleConstants.Settings.General.VaultId);
             var vaultUrl = Settings.GetValue<string>(ModuleConstants.Settings.General.VaultUrl);
             var tableName = Settings.GetValue<string>(ModuleConstants.Settings.General.TableName);
@@ -26,8 +25,8 @@ namespace VirtoCommerce.Skyflow.Data.Providers
                 PublicParameters = new Dictionary<string, string>
                 {
                     {"accessToken", tokenResponse.AccessToken},
-                    {"vaultId", vaultId},
-                    {"vaultUrl", vaultUrl},
+                    {"vaultID", vaultId},
+                    {"vaultURL", vaultUrl},
                     {"tableName", tableName}
                 }
             };
