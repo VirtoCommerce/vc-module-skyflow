@@ -19,9 +19,11 @@ using VirtoCommerce.Skyflow.Core.Services;
 
 namespace VirtoCommerce.Skyflow.Data.Services
 {
-    public class SkyflowClient(IOptions<SkyflowOptions> options) : ISkyflowClient
+    public class SkyflowClient(IOptionsSnapshot<SkyflowSdkOptions> optionsAccessor) : ISkyflowClient
     {
         private const string GrandType = "urn:ietf:params:oauth:grant-type:jwt-bearer";
+
+        private readonly SkyflowSdkOptions _options = optionsAccessor.Get(SkyflowSdkOptions.ClientSdkSettingName);
 
         public async Task<SkyflowBearerTokenResponse> GetBearerToken()
         {
@@ -32,7 +34,7 @@ namespace VirtoCommerce.Skyflow.Data.Services
             var body = JsonConvert.SerializeObject(payload);
             var content = new StringContent(body, Encoding.UTF8, "application/json");
 
-            var response = await httpClient.PostAsync(options.Value.TokenUri, content);
+            var response = await httpClient.PostAsync(_options.TokenUri, content);
 
             var responseContent = await response.Content.ReadFromJsonAsync<SkyflowBearerTokenResponse>();
             return responseContent;
@@ -44,11 +46,11 @@ namespace VirtoCommerce.Skyflow.Data.Services
             var certificate = CreateCertificate();
             var builder = JwtBuilder.Create()
                 .WithAlgorithm(new RS256Algorithm(certificate))
-                .AddClaim("iss", options.Value.ClientId)
-                .AddClaim("key", options.Value.KeyId)
-                .AddClaim("aud", options.Value.TokenUri)
+                .AddClaim("iss", _options.ClientId)
+                .AddClaim("key", _options.KeyId)
+                .AddClaim("aud", _options.TokenUri)
                 .AddClaim("exp", DateTimeOffset.UtcNow.AddHours(1).ToUnixTimeSeconds())
-                .AddClaim("sub", options.Value.ClientId);
+                .AddClaim("sub", _options.ClientId);
             var signedToken = builder.Encode();
             return signedToken;
         }
@@ -72,9 +74,9 @@ namespace VirtoCommerce.Skyflow.Data.Services
         {
             const string beginKey = "-----BEGIN PRIVATE KEY-----";
             const string endKey = "-----END PRIVATE KEY-----";
-            var startIndex = options.Value.PrivateKey.IndexOf(beginKey, StringComparison.InvariantCulture) + beginKey.Length;
-            var endIndex = options.Value.PrivateKey.LastIndexOf(endKey, StringComparison.InvariantCulture);
-            var result = options.Value.PrivateKey[startIndex..endIndex]
+            var startIndex = _options.PrivateKey.IndexOf(beginKey, StringComparison.InvariantCulture) + beginKey.Length;
+            var endIndex = _options.PrivateKey.LastIndexOf(endKey, StringComparison.InvariantCulture);
+            var result = _options.PrivateKey[startIndex..endIndex]
                 .Replace("\n", "").Replace("\\n", "").Replace(" ", "");
             return result;
         }
@@ -107,11 +109,11 @@ namespace VirtoCommerce.Skyflow.Data.Services
 
             var claims = new Claim[]
             {
-                new(JwtRegisteredClaimNames.Iss, options.Value.ClientId),
-                new("key", options.Value.KeyId),
-                new(JwtRegisteredClaimNames.Aud, options.Value.TokenUri),
+                new(JwtRegisteredClaimNames.Iss, _options.ClientId),
+                new("key", _options.KeyId),
+                new(JwtRegisteredClaimNames.Aud, _options.TokenUri),
                 new(JwtRegisteredClaimNames.Exp, DateTimeOffset.UtcNow.AddHours(1).ToUnixTimeSeconds().ToString()),
-                new(JwtRegisteredClaimNames.Sub, options.Value.ClientId)
+                new(JwtRegisteredClaimNames.Sub, _options.ClientId)
             };
 
             var token = new JwtSecurityToken(claims: claims, signingCredentials: signingCredentials);

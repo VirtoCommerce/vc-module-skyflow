@@ -3,6 +3,8 @@ using System.Collections.Specialized;
 using VirtoCommerce.OrdersModule.Core.Model;
 using VirtoCommerce.PaymentModule.Core.Model;
 using VirtoCommerce.PaymentModule.Model.Requests;
+using VirtoCommerce.Platform.Core.Settings;
+using VirtoCommerce.Skyflow.Core;
 using VirtoCommerce.Skyflow.Core.Services;
 
 namespace VirtoCommerce.Skyflow.Data.Providers
@@ -12,6 +14,11 @@ namespace VirtoCommerce.Skyflow.Data.Providers
         public override ProcessPaymentRequestResult ProcessPayment(ProcessPaymentRequest request)
         {
             var tokenResponse = skyflowClient.GetBearerToken().Result;
+
+            var vaultId = Settings.GetValue<string>(ModuleConstants.Settings.General.VaultId);
+            var vaultUrl = Settings.GetValue<string>(ModuleConstants.Settings.General.VaultUrl);
+            var tableName = Settings.GetValue<string>(ModuleConstants.Settings.General.TableName);
+
             var result = new ProcessPaymentRequestResult
             {
                 IsSuccess = true,
@@ -19,7 +26,9 @@ namespace VirtoCommerce.Skyflow.Data.Providers
                 PublicParameters = new Dictionary<string, string>
                 {
                     {"accessToken", tokenResponse.AccessToken},
-                    {"tokenType", tokenResponse.TokenType}
+                    {"vaultId", vaultId},
+                    {"vaultUrl", vaultUrl},
+                    {"tableName", tableName}
                 }
             };
 

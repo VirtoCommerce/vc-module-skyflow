@@ -19,7 +19,8 @@ public class Module : IModule, IHasConfiguration
 
     public void Initialize(IServiceCollection serviceCollection)
     {
-        serviceCollection.Configure<SkyflowOptions>(Configuration.GetSection("Skyflow"));
+        serviceCollection.Configure<SkyflowSdkOptions>(SkyflowSdkOptions.ClientSdkSettingName, Configuration.GetSection("Skyflow:" + SkyflowSdkOptions.ClientSdkSettingName));
+        serviceCollection.Configure<SkyflowSdkOptions>(SkyflowSdkOptions.ServerSdkSettingName, Configuration.GetSection("Skyflow:" + SkyflowSdkOptions.ServerSdkSettingName));
         serviceCollection.AddTransient<ISkyflowClient, SkyflowClient>();
     }
 
