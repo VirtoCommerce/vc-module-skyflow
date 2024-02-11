@@ -33,6 +33,19 @@ namespace VirtoCommerce.Skyflow.Core
                     DefaultValue = "cards"
                 };
 
+                public static readonly SettingDescriptor ConnectionUrl = new SettingDescriptor
+                {
+                    Name = "VirtoCommerce.Payment.Skyflow.ConnectionUrl",
+                    GroupName = "Payment|Skyflow",
+                    ValueType = SettingValueType.ShortText
+                };
+
+                public static readonly SettingDescriptor ConnectionBody = new SettingDescriptor
+                {
+                    Name = "VirtoCommerce.Payment.Skyflow.ConnectionBody",
+                    GroupName = "Payment|Skyflow",
+                    ValueType = SettingValueType.LongText
+                };
 
                 public static IEnumerable<SettingDescriptor> AllGeneralSettings
                 {
@@ -41,6 +54,8 @@ namespace VirtoCommerce.Skyflow.Core
                         yield return VaultId;
                         yield return VaultUrl;
                         yield return TableName;
+                        yield return ConnectionUrl;
+                        yield return ConnectionBody;
                     }
                 }
             }

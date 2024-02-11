@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Text.RegularExpressions;
 using VirtoCommerce.OrdersModule.Core.Model;
 using VirtoCommerce.PaymentModule.Core.Model;
 using VirtoCommerce.PaymentModule.Model.Requests;
@@ -40,7 +41,21 @@ namespace VirtoCommerce.Skyflow.Data.Providers
 
         public override PostProcessPaymentRequestResult PostProcessPayment(PostProcessPaymentRequest request)
         {
-            return new PostProcessPaymentRequestResult();
+            var url = Settings.GetValue<string>(ModuleConstants.Settings.General.ConnectionUrl);
+            var body = Settings.GetValue<string>(ModuleConstants.Settings.General.ConnectionBody);
+            var regex = new Regex("\\$[a-zA-Z_]+");
+            body = regex.Replace(body, match => request.Parameters[match.Value.TrimStart('$')]);
+
+            var response = skyflowClient.InvokeConnection(url, body).Result;
+
+            return new PostProcessPaymentRequestResult
+            {
+                PublicParameters = new Dictionary<string, string>
+                {
+                    {"response", response}
+                },
+                IsSuccess = true
+            };
         }
 
         public override VoidPaymentRequestResult VoidProcessPayment(VoidPaymentRequest request)
@@ -60,7 +75,10 @@ namespace VirtoCommerce.Skyflow.Data.Providers
 
         public override ValidatePostProcessRequestResult ValidatePostProcessRequest(NameValueCollection queryString)
         {
-            return new ValidatePostProcessRequestResult();
+            return new ValidatePostProcessRequestResult
+            {
+                IsSuccess = true
+            };
         }
 
         public override PaymentMethodType PaymentMethodType => PaymentMethodType.PreparedForm;
