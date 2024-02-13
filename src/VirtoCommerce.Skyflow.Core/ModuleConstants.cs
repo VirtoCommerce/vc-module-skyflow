@@ -40,6 +40,13 @@ namespace VirtoCommerce.Skyflow.Core
                     ValueType = SettingValueType.ShortText
                 };
 
+                public static readonly SettingDescriptor ConnectionContentType = new SettingDescriptor
+                {
+                    Name = "VirtoCommerce.Payment.Skyflow.ConnectionContentType",
+                    GroupName = "Payment|Skyflow",
+                    ValueType = SettingValueType.ShortText
+                };
+
                 public static readonly SettingDescriptor ConnectionBody = new SettingDescriptor
                 {
                     Name = "VirtoCommerce.Payment.Skyflow.ConnectionBody",
@@ -55,6 +62,7 @@ namespace VirtoCommerce.Skyflow.Core
                         yield return VaultUrl;
                         yield return TableName;
                         yield return ConnectionUrl;
+                        yield return ConnectionContentType;
                         yield return ConnectionBody;
                     }
                 }

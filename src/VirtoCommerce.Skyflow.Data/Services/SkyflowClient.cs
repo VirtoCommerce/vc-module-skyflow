@@ -19,7 +19,7 @@ using VirtoCommerce.Skyflow.Core.Services;
 
 namespace VirtoCommerce.Skyflow.Data.Services
 {
-    public class SkyflowClient(IOptionsSnapshot<SkyflowSdkOptions> optionsAccessor) : ISkyflowClient
+    public class SkyflowClient(IOptionsSnapshot<SkyflowSdkOptions> optionsAccessor, IHttpClientFactory httpClientFactory) : ISkyflowClient
     {
         private const string GrandType = "urn:ietf:params:oauth:grant-type:jwt-bearer";
 
@@ -31,28 +31,51 @@ namespace VirtoCommerce.Skyflow.Data.Services
             return GetBearerTokenInternal(_clientOptions);
         }
 
-        public async Task<string> InvokeConnection(string url, string body)
+        public async Task<string> InvokeConnection(string url, string contentType, string body)
         {
             var token = await GetBearerTokenInternal(_serverOptions);
-            using var httpClient = new HttpClient();
-            httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {token.AccessToken}");
-            var content = new StringContent(body, Encoding.UTF8, "application/json");
-            var response = await httpClient.PostAsync(url, content);
+
+            var request = new HttpRequestMessage
+            {
+                Method = HttpMethod.Post,
+                Headers =
+                {
+                    {"Authorization", $"Bearer {token.AccessToken}"},
+                    {"Content-Type", contentType},
+                },
+                Content = new StringContent(body, Encoding.UTF8, contentType),
+                RequestUri = new Uri(url)
+            };
+
+            var response = await Send(request);
             var responseText = await response.Content.ReadAsStringAsync();
             return responseText;
         }
 
-        private static async Task<SkyflowBearerTokenResponse> GetBearerTokenInternal(SkyflowSdkOptions options)
+        private async Task<HttpResponseMessage> Send(HttpRequestMessage message)
+        {
+            using var httpClient = httpClientFactory.CreateClient();
+            var response = await httpClient.SendAsync(message);
+            return response;
+        }
+
+        private async Task<SkyflowBearerTokenResponse> GetBearerTokenInternal(SkyflowSdkOptions options)
         {
             var signedToken = GenerateToken(options);
 
-            using var httpClient = new HttpClient();
             var payload = new { grant_type = GrandType, assertion = signedToken };
             var body = JsonConvert.SerializeObject(payload);
             var content = new StringContent(body, Encoding.UTF8, "application/json");
 
-            var response = await httpClient.PostAsync(options.TokenUri, content);
+            var request = new HttpRequestMessage
+            {
+                RequestUri = new Uri(options.TokenUri),
+                Headers = { { "Content-Type", "application/json" } },
+                Method = HttpMethod.Post,
+                Content = content
+            };
 
+            var response = await Send(request);
             var responseContent = await response.Content.ReadFromJsonAsync<SkyflowBearerTokenResponse>();
             return responseContent;
         }
