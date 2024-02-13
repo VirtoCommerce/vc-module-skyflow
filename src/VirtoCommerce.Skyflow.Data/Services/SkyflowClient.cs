@@ -41,7 +41,6 @@ namespace VirtoCommerce.Skyflow.Data.Services
                 Headers =
                 {
                     {"Authorization", $"Bearer {token.AccessToken}"},
-                    {"Content-Type", contentType},
                 },
                 Content = new StringContent(body, Encoding.UTF8, contentType),
                 RequestUri = new Uri(url)
@@ -67,11 +66,8 @@ namespace VirtoCommerce.Skyflow.Data.Services
             var body = JsonConvert.SerializeObject(payload);
             var content = new StringContent(body, Encoding.UTF8, "application/json");
 
-            var request = new HttpRequestMessage
+            var request = new HttpRequestMessage(HttpMethod.Post, options.TokenUri)
             {
-                RequestUri = new Uri(options.TokenUri),
-                Headers = { { "Content-Type", "application/json" } },
-                Method = HttpMethod.Post,
                 Content = content
             };
 
