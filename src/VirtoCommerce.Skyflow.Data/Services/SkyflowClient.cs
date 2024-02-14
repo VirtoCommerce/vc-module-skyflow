@@ -19,36 +19,28 @@ using VirtoCommerce.Skyflow.Core.Services;
 
 namespace VirtoCommerce.Skyflow.Data.Services
 {
-    public class SkyflowClient(IOptionsSnapshot<SkyflowSdkOptions> optionsAccessor, IHttpClientFactory httpClientFactory) : ISkyflowClient
+    public class SkyflowClient(IOptions<SkyflowOptions> options, IHttpClientFactory httpClientFactory) : ISkyflowClient
     {
         private const string GrandType = "urn:ietf:params:oauth:grant-type:jwt-bearer";
-
-        private readonly SkyflowSdkOptions _clientOptions = optionsAccessor.Get(SkyflowSdkOptions.ClientSdkSettingName);
-        private readonly SkyflowSdkOptions _serverOptions = optionsAccessor.Get(SkyflowSdkOptions.ServerSdkSettingName);
+        private readonly SkyflowOptions _options = options.Value;
 
         public Task<SkyflowBearerTokenResponse> GetBearerToken()
         {
-            return GetBearerTokenInternal(_clientOptions);
+            // todo: check token is valid
+            return GetBearerTokenInternal(_options.ClientSdk);
         }
 
-        public async Task<string> InvokeConnection(string url, string contentType, string body)
+        public async Task<HttpResponseMessage> InvokeConnection(string connectionName, HttpRequestMessage request)
         {
-            var token = await GetBearerTokenInternal(_serverOptions);
-
-            var request = new HttpRequestMessage
-            {
-                Method = HttpMethod.Post,
-                Headers =
-                {
-                    {"Authorization", $"Bearer {token.AccessToken}"},
-                },
-                Content = new StringContent(body, Encoding.UTF8, contentType),
-                RequestUri = new Uri(url)
-            };
-
+            // todo: check options exists
+            var options = _options.Connections[connectionName];
+            // todo: check token is valid
+            var token = await GetBearerTokenInternal(options);
+            request.Headers.Add("Authorization", $"Bearer {token.AccessToken}");
             var response = await Send(request);
-            var responseText = await response.Content.ReadAsStringAsync();
-            return responseText;
+            // question: should I remove the Authorization header?
+            // request.Headers.Remove("Authorization");
+            return response;
         }
 
         private async Task<HttpResponseMessage> Send(HttpRequestMessage message)
@@ -66,7 +58,7 @@ namespace VirtoCommerce.Skyflow.Data.Services
             var body = JsonConvert.SerializeObject(payload);
             var content = new StringContent(body, Encoding.UTF8, "application/json");
 
-            var request = new HttpRequestMessage(HttpMethod.Post, options.TokenUri)
+            var request = new HttpRequestMessage(HttpMethod.Post, _options.TokenUri)
             {
                 Content = content
             };
@@ -76,14 +68,14 @@ namespace VirtoCommerce.Skyflow.Data.Services
             return responseContent;
         }
 
-        private static string GenerateToken(SkyflowSdkOptions options)
+        private string GenerateToken(SkyflowSdkOptions options)
         {
             var certificate = CreateCertificate(options);
             var builder = JwtBuilder.Create()
                 .WithAlgorithm(new RS256Algorithm(certificate))
                 .AddClaim("iss", options.ClientId)
                 .AddClaim("key", options.KeyId)
-                .AddClaim("aud", options.TokenUri)
+                .AddClaim("aud", _options.TokenUri)
                 .AddClaim("exp", DateTimeOffset.UtcNow.AddHours(1).ToUnixTimeSeconds())
                 .AddClaim("sub", options.ClientId);
             var signedToken = builder.Encode();
@@ -146,7 +138,7 @@ namespace VirtoCommerce.Skyflow.Data.Services
             {
                 new(JwtRegisteredClaimNames.Iss, options.ClientId),
                 new("key", options.KeyId),
-                new(JwtRegisteredClaimNames.Aud, options.TokenUri),
+                new(JwtRegisteredClaimNames.Aud, _options.TokenUri),
                 new(JwtRegisteredClaimNames.Exp, DateTimeOffset.UtcNow.AddHours(1).ToUnixTimeSeconds().ToString()),
                 new(JwtRegisteredClaimNames.Sub, options.ClientId)
             };

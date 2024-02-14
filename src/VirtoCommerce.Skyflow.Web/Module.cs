@@ -19,9 +19,10 @@ public class Module : IModule, IHasConfiguration
 
     public void Initialize(IServiceCollection serviceCollection)
     {
-        serviceCollection.Configure<SkyflowSdkOptions>(SkyflowSdkOptions.ClientSdkSettingName, Configuration.GetSection("Skyflow:" + SkyflowSdkOptions.ClientSdkSettingName));
-        serviceCollection.Configure<SkyflowSdkOptions>(SkyflowSdkOptions.ServerSdkSettingName, Configuration.GetSection("Skyflow:" + SkyflowSdkOptions.ServerSdkSettingName));
+        serviceCollection.Configure<SkyflowOptions>(Configuration.GetSection("Skyflow"));
         serviceCollection.AddTransient<ISkyflowClient, SkyflowClient>();
+        serviceCollection.AddTransient<IPaymentClientFactory, DefaultPaymentClientFactory>();
+        serviceCollection.AddTransient<IPaymentClient, DefaultPaymentClient>();
     }
 
     public void PostInitialize(IApplicationBuilder appBuilder)
@@ -34,7 +35,8 @@ public class Module : IModule, IHasConfiguration
 
         var paymentMethodsRegistrar = appBuilder.ApplicationServices.GetRequiredService<IPaymentMethodsRegistrar>();
         paymentMethodsRegistrar.RegisterPaymentMethod(() => new SkyflowPaymentMethod(
-            appBuilder.ApplicationServices.GetService<ISkyflowClient>()
+            appBuilder.ApplicationServices.GetService<ISkyflowClient>(),
+            appBuilder.ApplicationServices.GetService<IPaymentClientFactory>()
         ));
         //Associate the settings with the particular payment method
         settingsRegistrar.RegisterSettingsForType(ModuleConstants.Settings.General.AllGeneralSettings, nameof(SkyflowPaymentMethod));

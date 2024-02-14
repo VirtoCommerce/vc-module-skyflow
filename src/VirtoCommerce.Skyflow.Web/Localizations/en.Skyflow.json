@@ -12,18 +12,6 @@
       "TableName": {
         "title": "TableName",
         "description": "The name of the table where you store card data."
-      },
-      "ConnectionUrl": {
-        "title": "ConnectionUrl",
-        "description": "The url to interact with the connection."
-      },
-      "ConnectionContentType": {
-        "title": "Connection ContentType",
-        "description": "The ContentType to interact with the connection."
-      },
-      "ConnectionBody": {
-        "title": "ConnectionBody",
-        "description": "The connection request body."
       }
     }
   }

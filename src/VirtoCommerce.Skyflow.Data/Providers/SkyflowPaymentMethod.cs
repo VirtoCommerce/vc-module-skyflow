@@ -1,7 +1,5 @@
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.Globalization;
-using System.Text.RegularExpressions;
 using VirtoCommerce.OrdersModule.Core.Model;
 using VirtoCommerce.PaymentModule.Core.Model;
 using VirtoCommerce.PaymentModule.Model.Requests;
@@ -11,7 +9,7 @@ using VirtoCommerce.Skyflow.Core.Services;
 
 namespace VirtoCommerce.Skyflow.Data.Providers
 {
-    public class SkyflowPaymentMethod(ISkyflowClient skyflowClient) : PaymentMethod(nameof(SkyflowPaymentMethod))
+    public class SkyflowPaymentMethod(ISkyflowClient skyflowClient, IPaymentClientFactory paymentClientFactory) : PaymentMethod(nameof(SkyflowPaymentMethod))
     {
         public override ProcessPaymentRequestResult ProcessPayment(ProcessPaymentRequest request)
         {
@@ -42,30 +40,14 @@ namespace VirtoCommerce.Skyflow.Data.Providers
 
         public override PostProcessPaymentRequestResult PostProcessPayment(PostProcessPaymentRequest request)
         {
-            var order = (CustomerOrder)request.Order;
-            var sum = order.Total;
-            var currency = order.Currency;
-            var url = Settings.GetValue<string>(ModuleConstants.Settings.General.ConnectionUrl);
-            var body = Settings.GetValue<string>(ModuleConstants.Settings.General.ConnectionBody);
-            var contentType = Settings.GetValue<string>(ModuleConstants.Settings.General.ConnectionContentType);
-            var regex = new Regex("\\$[a-zA-Z_]+");
-            body = regex.Replace(body, match => match.Value switch
-            {
-                "$currency" => currency,
-                "$amount" => sum.ToString(CultureInfo.InvariantCulture),
-                _ => request.Parameters[match.Value.TrimStart('$')],
-            });
+            var paymentClient = paymentClientFactory.GetPaymentClient(request);
+            var connectionName = paymentClientFactory.GetConnectionName(request);
 
-            var response = skyflowClient.InvokeConnection(url, contentType, body).Result;
+            var requestMessage = paymentClient.CreateConnectionRequest(request);
+            var responseMessage = skyflowClient.InvokeConnection(connectionName, requestMessage).Result;
 
-            return new PostProcessPaymentRequestResult
-            {
-                PublicParameters = new Dictionary<string, string>
-                {
-                    {"response", response}
-                },
-                IsSuccess = true
-            };
+            var result = paymentClient.CreatePostProcessPaymentResponse(request, responseMessage);
+            return result;
         }
 
         public override VoidPaymentRequestResult VoidProcessPayment(VoidPaymentRequest request)
