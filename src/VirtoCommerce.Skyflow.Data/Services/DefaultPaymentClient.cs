@@ -10,9 +10,32 @@ using VirtoCommerce.Skyflow.Core.Services;
 
 namespace VirtoCommerce.Skyflow.Data.Services
 {
-    public class DefaultPaymentClient(IConfiguration configuration) : IPaymentClient
+    public partial class DefaultPaymentClient(IConfiguration configuration) : IPaymentClient
     {
-        private static readonly Regex ReplaceVariableRegex = new("\\$[a-zA-Z_]+", RegexOptions.Compiled);
+        [GeneratedRegex("\\$[a-z0-9_]+", RegexOptions.IgnoreCase)]
+        private static partial Regex ReplaceVariableRegex();
+
+        private const string BodyTemplate = """
+                                            <createTransactionRequest xmlns="AnetApi/xml/v1/schema/AnetApiSchema.xsd">
+                                                <merchantAuthentication>
+                                                    <name>$name</name>
+                                                    <transactionKey>$transactionKey</transactionKey>
+                                                </merchantAuthentication>
+                                                <refId>123456</refId>
+                                                <transactionRequest>
+                                                    <transactionType>authCaptureTransaction</transactionType>
+                                                    <amount>$amount</amount>
+                                                    <currencyCode>$currency</currencyCode>
+                                                    <payment>
+                                                        <creditCard>
+                                                            <cardNumber>$card_number</cardNumber>
+                                                            <expirationDate>$card_expiration</expirationDate>
+                                                            <cardCode>$cvv</cardCode>
+                                                        </creditCard>
+                                                    </payment>
+                                                </transactionRequest>
+                                            </createTransactionRequest>
+                                            """;
 
         public HttpRequestMessage CreateConnectionRequest(PaymentRequestBase request)
         {
@@ -21,9 +44,9 @@ namespace VirtoCommerce.Skyflow.Data.Services
 
             var sum = order.Total;
             var currency = order.Currency;
-            var body = GetBodyTemplate();
+            var body = BodyTemplate;
 
-            body = ReplaceVariableRegex.Replace(body, match => match.Value switch
+            body = ReplaceVariableRegex().Replace(body, match => match.Value switch
             {
                 "$name" => sectionConfig.Name,
                 "$transactionKey" => sectionConfig.TransactionKey,
@@ -36,31 +59,6 @@ namespace VirtoCommerce.Skyflow.Data.Services
             {
                 Content = new StringContent(body, Encoding.UTF8, "application/xml")
             };
-        }
-
-        private string GetBodyTemplate()
-        {
-            return """
-                   <createTransactionRequest xmlns="AnetApi/xml/v1/schema/AnetApiSchema.xsd">
-                       <merchantAuthentication>
-                           <name>$name</name>
-                           <transactionKey>$transactionKey</transactionKey>
-                       </merchantAuthentication>
-                       <refId>123456</refId>
-                       <transactionRequest>
-                           <transactionType>authCaptureTransaction</transactionType>
-                           <amount>$amount</amount>
-                           <currencyCode>$currency</currencyCode>
-                           <payment>
-                               <creditCard>
-                                   <cardNumber>$card_number</cardNumber>
-                                   <expirationDate>$card_expiration</expirationDate>
-                                   <cardCode>$cvv</cardCode>
-                               </creditCard>
-                           </payment>
-                       </transactionRequest>
-                   </createTransactionRequest>
-                   """;
         }
 
         public PostProcessPaymentRequestResult CreatePostProcessPaymentResponse(PaymentRequestBase request,
