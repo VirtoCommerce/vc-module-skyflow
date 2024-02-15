@@ -32,10 +32,7 @@ namespace VirtoCommerce.Skyflow.Data.Services
 
         public Task<HttpResponseMessage> InvokeConnection(string connectionName, HttpRequestMessage request)
         {
-            if (request == null)
-            {
-                throw new ArgumentNullException(nameof(request));
-            }
+            ArgumentNullException.ThrowIfNull(request);
 
             if (!_options.Connections.TryGetValue(connectionName, out var connectionOptions))
             {
