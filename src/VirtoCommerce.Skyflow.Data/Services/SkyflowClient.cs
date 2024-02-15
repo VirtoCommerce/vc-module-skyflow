@@ -1,5 +1,4 @@
 using System;
-using System.Configuration;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http;
 using System.Net.Http.Json;
@@ -15,6 +14,7 @@ using JWT.Serializers;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
+using VirtoCommerce.Platform.Core.Exceptions;
 using VirtoCommerce.Skyflow.Core.Models;
 using VirtoCommerce.Skyflow.Core.Services;
 
@@ -84,17 +84,17 @@ namespace VirtoCommerce.Skyflow.Data.Services
         {
             if (string.IsNullOrEmpty(options.KeyId))
             {
-                throw new ConfigurationErrorsException($"{nameof(options.KeyId)} must be set");
+                throw new PlatformException($"{nameof(options.KeyId)} must be set");
             }
 
             if (string.IsNullOrEmpty(options.ClientId))
             {
-                throw new ConfigurationErrorsException($"{nameof(options.ClientId)} must be set");
+                throw new PlatformException($"{nameof(options.ClientId)} must be set");
             }
 
             if (string.IsNullOrEmpty(_options.TokenUri))
             {
-                throw new ConfigurationErrorsException($"{nameof(_options.TokenUri)} must be set");
+                throw new PlatformException($"{nameof(_options.TokenUri)} must be set");
             }
 
             var certificate = CreateCertificate(options);
