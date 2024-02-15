@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Net.Http;
@@ -5,6 +6,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using Microsoft.Extensions.Configuration;
 using VirtoCommerce.OrdersModule.Core.Model;
+using VirtoCommerce.PaymentModule.Core.Model;
 using VirtoCommerce.PaymentModule.Model.Requests;
 using VirtoCommerce.Skyflow.Core.Services;
 
@@ -32,6 +34,9 @@ namespace VirtoCommerce.Skyflow.Data.Services
                                                             <cardCode>$cvv</cardCode>
                                                         </creditCard>
                                                     </payment>
+                                                    <order>
+                                                        <invoiceNumber>$orderNumber</invoiceNumber>
+                                                    </order>
                                                 </transactionRequest>
                                             </createTransactionRequest>
                                             """;
@@ -51,6 +56,7 @@ namespace VirtoCommerce.Skyflow.Data.Services
                 "$transactionKey" => sectionConfig.TransactionKey,
                 "$currency" => currency,
                 "$amount" => sum.ToString(CultureInfo.InvariantCulture),
+                "$orderNumber" => order.Number,
                 _ => request.Parameters[match.Value.TrimStart('$')],
             });
 
@@ -64,14 +70,46 @@ namespace VirtoCommerce.Skyflow.Data.Services
             HttpResponseMessage responseMessage)
         {
             var responseText = responseMessage.Content.ReadAsStringAsync().GetAwaiter().GetResult();
-            return new PostProcessPaymentRequestResult
+            var result = new PostProcessPaymentRequestResult
             {
                 PublicParameters = new Dictionary<string, string>
                 {
                     {"response", responseText}
                 },
+
                 IsSuccess = true
             };
+
+            var transactionMessage = responseText;
+
+            var payment = (PaymentIn)request.Payment;
+            var order = (CustomerOrder)request.Order;
+
+            result.NewPaymentStatus = payment.PaymentStatus = PaymentStatus.Paid;
+            payment.Status = payment.PaymentStatus.ToString();
+            payment.IsApproved = true;
+            payment.CapturedDate = DateTime.UtcNow;
+            payment.Comment = $"Paid successfully. Transaction Info {transactionMessage}{Environment.NewLine}";
+
+            var paymentTransaction = new PaymentGatewayTransaction
+            {
+                IsProcessed = true,
+                ProcessedDate = DateTime.UtcNow,
+                CurrencyCode = payment.Currency,
+                Amount = payment.Sum,
+                Note = responseText
+            };
+
+            payment.Transactions.Add(paymentTransaction);
+
+
+            result.IsSuccess = true;
+            result.OrderId = order.Id;
+
+            order.Status = "Processing";
+            payment.AuthorizedDate = DateTime.UtcNow;
+
+            return result;
         }
     }
 }
