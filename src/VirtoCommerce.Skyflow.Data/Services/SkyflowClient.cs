@@ -1,4 +1,5 @@
 using System;
+using System.Configuration;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http;
 using System.Net.Http.Json;
@@ -29,13 +30,23 @@ namespace VirtoCommerce.Skyflow.Data.Services
             return GetBearerTokenInternal(_options.ClientSdk);
         }
 
-        public async Task<HttpResponseMessage> InvokeConnection(string connectionName, HttpRequestMessage request)
+        public Task<HttpResponseMessage> InvokeConnection(string connectionName, HttpRequestMessage request)
         {
-            if (!_options.Connections.ContainsKey(connectionName))
+            if (request == null)
+            {
+                throw new ArgumentNullException(nameof(request));
+            }
+
+            if (!_options.Connections.TryGetValue(connectionName, out var connectionOptions))
             {
                 throw new ArgumentException($"Connection {connectionName} not found");
             }
-            var options = _options.Connections[connectionName];
+
+            return InvokeConnectionInternal(connectionOptions, request);
+        }
+
+        private async Task<HttpResponseMessage> InvokeConnectionInternal(SkyflowSdkOptions options, HttpRequestMessage request)
+        {
             var token = await GetBearerTokenInternal(options);
             request.Headers.Add("Authorization", $"Bearer {token.AccessToken}");
             var response = await Send(request);
@@ -76,17 +87,17 @@ namespace VirtoCommerce.Skyflow.Data.Services
         {
             if (string.IsNullOrEmpty(options.KeyId))
             {
-                throw new ArgumentNullException(nameof(options.KeyId));
+                throw new ConfigurationErrorsException($"{nameof(options.KeyId)} must be set");
             }
 
             if (string.IsNullOrEmpty(options.ClientId))
             {
-                throw new ArgumentNullException(nameof(options.ClientId));
+                throw new ConfigurationErrorsException($"{nameof(options.ClientId)} must be set");
             }
 
             if (string.IsNullOrEmpty(_options.TokenUri))
             {
-                throw new ArgumentNullException(nameof(_options.TokenUri));
+                throw new ConfigurationErrorsException($"{nameof(_options.TokenUri)} must be set");
             }
 
             var certificate = CreateCertificate(options);
