@@ -7,12 +7,12 @@ namespace VirtoCommerce.Skyflow.Data.Services
 {
     public class DefaultPaymentClientFactory(IEnumerable<IPaymentClient> clients) : IPaymentClientFactory
     {
-        public IPaymentClient GetPaymentClient(PaymentRequestBase request)
+        public virtual IPaymentClient GetPaymentClient(PaymentRequestBase request)
         {
             return clients.FirstOrDefault();
         }
 
-        public string GetConnectionName(PaymentRequestBase request)
+        public virtual string GetConnectionName(PaymentRequestBase request)
         {
             return "Default";
         }

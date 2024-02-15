@@ -21,7 +21,6 @@ namespace VirtoCommerce.Skyflow.Data.Services
                                                     <name>$name</name>
                                                     <transactionKey>$transactionKey</transactionKey>
                                                 </merchantAuthentication>
-                                                <refId>123456</refId>
                                                 <transactionRequest>
                                                     <transactionType>authCaptureTransaction</transactionType>
                                                     <amount>$amount</amount>
@@ -73,13 +72,6 @@ namespace VirtoCommerce.Skyflow.Data.Services
                 },
                 IsSuccess = true
             };
-        }
-
-        private class DefaultConnectionOptions
-        {
-            public string ConnectionUrl { get; set; }
-            public string Name { get; set; }
-            public string TransactionKey { get; set; }
         }
     }
 }

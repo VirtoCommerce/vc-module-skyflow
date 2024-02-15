@@ -26,20 +26,19 @@ namespace VirtoCommerce.Skyflow.Data.Services
 
         public Task<SkyflowBearerTokenResponse> GetBearerToken()
         {
-            // todo: check token is valid
             return GetBearerTokenInternal(_options.ClientSdk);
         }
 
         public async Task<HttpResponseMessage> InvokeConnection(string connectionName, HttpRequestMessage request)
         {
-            // todo: check options exists
+            if (!_options.Connections.ContainsKey(connectionName))
+            {
+                throw new ArgumentException($"Connection {connectionName} not found");
+            }
             var options = _options.Connections[connectionName];
-            // todo: check token is valid
             var token = await GetBearerTokenInternal(options);
             request.Headers.Add("Authorization", $"Bearer {token.AccessToken}");
             var response = await Send(request);
-            // question: should I remove the Authorization header?
-            // request.Headers.Remove("Authorization");
             return response;
         }
 
@@ -65,11 +64,31 @@ namespace VirtoCommerce.Skyflow.Data.Services
 
             var response = await Send(request);
             var responseContent = await response.Content.ReadFromJsonAsync<SkyflowBearerTokenResponse>();
+
+            if (responseContent == null || string.IsNullOrEmpty(responseContent.AccessToken))
+            {
+                throw new InvalidOperationException("Failed to get bearer token");
+            }
             return responseContent;
         }
 
         private string GenerateToken(SkyflowSdkOptions options)
         {
+            if (string.IsNullOrEmpty(options.KeyId))
+            {
+                throw new ArgumentNullException(nameof(options.KeyId));
+            }
+
+            if (string.IsNullOrEmpty(options.ClientId))
+            {
+                throw new ArgumentNullException(nameof(options.ClientId));
+            }
+
+            if (string.IsNullOrEmpty(_options.TokenUri))
+            {
+                throw new ArgumentNullException(nameof(_options.TokenUri));
+            }
+
             var certificate = CreateCertificate(options);
             var builder = JwtBuilder.Create()
                 .WithAlgorithm(new RS256Algorithm(certificate))
@@ -103,6 +122,12 @@ namespace VirtoCommerce.Skyflow.Data.Services
             const string endKey = "-----END PRIVATE KEY-----";
             var startIndex = options.PrivateKey.IndexOf(beginKey, StringComparison.InvariantCulture) + beginKey.Length;
             var endIndex = options.PrivateKey.LastIndexOf(endKey, StringComparison.InvariantCulture);
+
+            if (startIndex < beginKey.Length || endIndex < beginKey.Length)
+            {
+                throw new InvalidOperationException("Wrong PrivateKey setting");
+            }
+
             var result = options.PrivateKey[startIndex..endIndex]
                 .Replace("\n", "").Replace("\\n", "").Replace(" ", "");
             return result;

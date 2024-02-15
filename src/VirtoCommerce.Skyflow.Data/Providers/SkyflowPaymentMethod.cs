@@ -43,8 +43,8 @@ namespace VirtoCommerce.Skyflow.Data.Providers
             var paymentClient = paymentClientFactory.GetPaymentClient(request);
             var connectionName = paymentClientFactory.GetConnectionName(request);
 
-            var requestMessage = paymentClient.CreateConnectionRequest(request);
-            var responseMessage = skyflowClient.InvokeConnection(connectionName, requestMessage).Result;
+            using var requestMessage = paymentClient.CreateConnectionRequest(request);
+            var responseMessage = skyflowClient.InvokeConnection(connectionName, requestMessage).GetAwaiter().GetResult();
 
             var result = paymentClient.CreatePostProcessPaymentResponse(request, responseMessage);
             return result;
