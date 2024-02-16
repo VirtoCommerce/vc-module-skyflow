@@ -1,9 +1,10 @@
 using System;
-using System.Collections.Generic;
 using System.Globalization;
 using System.Net.Http;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Xml.Linq;
+using System.Xml.XPath;
 using Microsoft.Extensions.Configuration;
 using VirtoCommerce.OrdersModule.Core.Model;
 using VirtoCommerce.PaymentModule.Core.Model;
@@ -66,21 +67,51 @@ namespace VirtoCommerce.Skyflow.Data.Services
             };
         }
 
-        public PostProcessPaymentRequestResult CreatePostProcessPaymentResponse(PaymentRequestBase request,
-            HttpResponseMessage responseMessage)
+        public PostProcessPaymentRequestResult CreatePostProcessPaymentResponse(PaymentRequestBase request, HttpResponseMessage responseMessage)
         {
             var responseText = responseMessage.Content.ReadAsStringAsync().GetAwaiter().GetResult();
-            var result = new PostProcessPaymentRequestResult
+
+            var doc = XDocument.Parse(responseText);
+
+            var element = doc.XPathSelectElement("//createTransactionResponse/messages/resultCode");
+
+            if (element != null)
             {
-                PublicParameters = new Dictionary<string, string>
+                var resultCode = element.Value;
+                if (resultCode == "Ok")
                 {
-                    {"response", responseText}
-                },
+                    return CreateSuccessResult(request, responseText);
+                }
 
-                IsSuccess = true
+                if (resultCode == "Error")
+                {
+                    var messageText = doc.XPathSelectElement("//createTransactionResponse/messages/message/text")?.Value;
+                    var errorText = doc.XPathSelectElement("//createTransactionResponse/transactionResponse/errors/errorText")?.Value;
+                    var message = $"{messageText} ({errorText})";
+                    return CreateErrorResult(request, responseText, message);
+                }
+            }
+
+            return CreateErrorResult(request, responseText, "Unexpected response");
+        }
+
+        private PostProcessPaymentRequestResult CreateErrorResult(PaymentRequestBase request, string responseText, string message)
+        {
+            var payment = (PaymentIn)request.Payment;
+
+            payment.Status = PaymentStatus.Error.ToString();
+            payment.ProcessPaymentResult = new ProcessPaymentRequestResult
+            {
+                ErrorMessage = $"There was an error processing your transaction: {message}",
             };
+            payment.Comment = $"{responseText}{Environment.NewLine}";
 
-            var transactionMessage = responseText;
+            return new PostProcessPaymentRequestResult { ErrorMessage = payment.ProcessPaymentResult.ErrorMessage };
+        }
+
+        private PostProcessPaymentRequestResult CreateSuccessResult(PaymentRequestBase request, string responseText)
+        {
+            var result = new PostProcessPaymentRequestResult { IsSuccess = true };
 
             var payment = (PaymentIn)request.Payment;
             var order = (CustomerOrder)request.Order;
@@ -89,7 +120,7 @@ namespace VirtoCommerce.Skyflow.Data.Services
             payment.Status = payment.PaymentStatus.ToString();
             payment.IsApproved = true;
             payment.CapturedDate = DateTime.UtcNow;
-            payment.Comment = $"Paid successfully. Transaction Info {transactionMessage}{Environment.NewLine}";
+            payment.Comment = $"Paid successfully. Transaction Info {responseText}{Environment.NewLine}";
 
             var paymentTransaction = new PaymentGatewayTransaction
             {

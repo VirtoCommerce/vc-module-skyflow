@@ -1,4 +1,12 @@
 {
+  "payment": {
+    "labels": {
+      "SkyflowPaymentMethod": {
+        "name": "Skyflow",
+        "description": "Skyflow integration"
+      }
+    }
+  },
   "settings": {
     "VirtoCommerce.Payment.Skyflow": {
       "VaultId": {
