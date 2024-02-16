@@ -95,7 +95,7 @@ namespace VirtoCommerce.Skyflow.Data.Services
             return CreateErrorResult(request, responseText, "Unexpected response");
         }
 
-        private PostProcessPaymentRequestResult CreateErrorResult(PaymentRequestBase request, string responseText, string message)
+        private static PostProcessPaymentRequestResult CreateErrorResult(PaymentRequestBase request, string responseText, string message)
         {
             var payment = (PaymentIn)request.Payment;
 
@@ -109,7 +109,7 @@ namespace VirtoCommerce.Skyflow.Data.Services
             return new PostProcessPaymentRequestResult { ErrorMessage = payment.ProcessPaymentResult.ErrorMessage };
         }
 
-        private PostProcessPaymentRequestResult CreateSuccessResult(PaymentRequestBase request, string responseText)
+        private static PostProcessPaymentRequestResult CreateSuccessResult(PaymentRequestBase request, string responseText)
         {
             var result = new PostProcessPaymentRequestResult { IsSuccess = true };
 
