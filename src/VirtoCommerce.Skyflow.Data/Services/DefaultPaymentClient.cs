@@ -3,6 +3,7 @@ using System.Globalization;
 using System.Net.Http;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Xml;
 using System.Xml.Linq;
 using System.Xml.XPath;
 using Microsoft.Extensions.Configuration;
@@ -73,7 +74,14 @@ namespace VirtoCommerce.Skyflow.Data.Services
 
             var doc = XDocument.Parse(responseText);
 
-            var element = doc.XPathSelectElement("//createTransactionResponse/messages/resultCode");
+            var ns = doc.Root?.GetDefaultNamespace();
+            var nsManager = new XmlNamespaceManager(new NameTable());
+            if (ns != null)
+            {
+                nsManager.AddNamespace("ns", ns.NamespaceName);
+            }
+
+            var element = doc.XPathSelectElement("//ns:createTransactionResponse/ns:messages/ns:resultCode", nsManager);
 
             if (element != null)
             {
@@ -85,8 +93,8 @@ namespace VirtoCommerce.Skyflow.Data.Services
 
                 if (resultCode == "Error")
                 {
-                    var messageText = doc.XPathSelectElement("//createTransactionResponse/messages/message/text")?.Value;
-                    var errorText = doc.XPathSelectElement("//createTransactionResponse/transactionResponse/errors/errorText")?.Value;
+                    var messageText = doc.XPathSelectElement("//ns:createTransactionResponse/ns:messages/ns:message/ns:text", nsManager)?.Value;
+                    var errorText = doc.XPathSelectElement("//ns:createTransactionResponse/ns:transactionResponse/ns:errors/ns:errorText", nsManager)?.Value;
                     var message = $"{messageText} ({errorText})";
                     return CreateErrorResult(request, responseText, message);
                 }
