@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using VirtoCommerce.OrdersModule.Core.Model;
@@ -52,7 +53,7 @@ namespace VirtoCommerce.Skyflow.Data.Providers
 
         public override VoidPaymentRequestResult VoidProcessPayment(VoidPaymentRequest request)
         {
-            return new VoidPaymentRequestResult();
+            throw new NotImplementedException();
         }
 
         public override CapturePaymentRequestResult CaptureProcessPayment(CapturePaymentRequest context)

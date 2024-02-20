@@ -19,7 +19,7 @@ namespace VirtoCommerce.Skyflow.Data.Services
         [GeneratedRegex("\\$[a-z0-9_]+", RegexOptions.IgnoreCase)]
         private static partial Regex ReplaceVariableRegex();
 
-        private const string BodyTemplate = """
+        private const string AuthBodyTemplate = """
                                             <createTransactionRequest xmlns="AnetApi/xml/v1/schema/AnetApiSchema.xsd">
                                                 <merchantAuthentication>
                                                     <name>$name</name>
@@ -50,9 +50,8 @@ namespace VirtoCommerce.Skyflow.Data.Services
 
             var sum = order.Total;
             var currency = order.Currency;
-            var body = BodyTemplate;
 
-            body = ReplaceVariableRegex().Replace(body, match => match.Value switch
+            var body = ReplaceVariableRegex().Replace(AuthBodyTemplate, match => match.Value switch
             {
                 "$name" => sectionConfig.Name,
                 "$transactionKey" => sectionConfig.TransactionKey,
