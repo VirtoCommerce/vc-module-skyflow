@@ -46,7 +46,7 @@ namespace VirtoCommerce.Skyflow.Data.Services
         public HttpRequestMessage CreateConnectionRequest(PaymentRequestBase request)
         {
             var order = (CustomerOrder)request.Order;
-            var sectionConfig = configuration.GetSection("Skyflow:DefaultConnection").Get<DefaultConnectionOptions>();
+            var sectionConfig = configuration.GetSection("Payments:Skyflow:DefaultConnection").Get<DefaultConnectionOptions>();
 
             var sum = order.Total;
             var currency = order.Currency;

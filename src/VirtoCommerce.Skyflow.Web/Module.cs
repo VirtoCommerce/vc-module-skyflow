@@ -19,7 +19,7 @@ public class Module : IModule, IHasConfiguration
 
     public void Initialize(IServiceCollection serviceCollection)
     {
-        serviceCollection.Configure<SkyflowOptions>(Configuration.GetSection("Skyflow"));
+        serviceCollection.Configure<SkyflowOptions>(Configuration.GetSection("Payments:Skyflow"));
         serviceCollection.AddTransient<ISkyflowClient, SkyflowClient>();
         serviceCollection.AddTransient<IPaymentClientFactory, DefaultPaymentClientFactory>();
         serviceCollection.AddTransient<IPaymentClient, DefaultPaymentClient>();
