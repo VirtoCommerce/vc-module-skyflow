@@ -58,12 +58,12 @@ namespace VirtoCommerce.Skyflow.Data.Providers
 
         public override CapturePaymentRequestResult CaptureProcessPayment(CapturePaymentRequest context)
         {
-            return new CapturePaymentRequestResult();
+            return new CapturePaymentRequestResult { IsSuccess = true, NewPaymentStatus = PaymentStatus.Paid };
         }
 
         public override RefundPaymentRequestResult RefundProcessPayment(RefundPaymentRequest context)
         {
-            return new RefundPaymentRequestResult();
+            return new RefundPaymentRequestResult { IsSuccess = true, NewRefundStatus = RefundStatus.Processed };
         }
 
         public override ValidatePostProcessRequestResult ValidatePostProcessRequest(NameValueCollection queryString)
