@@ -1,66 +1,55 @@
 using System.Collections.Generic;
 using VirtoCommerce.Platform.Core.Settings;
 
-namespace VirtoCommerce.Skyflow.Core;
-
-public static class ModuleConstants
+namespace VirtoCommerce.Skyflow.Core
 {
-    public static class Security
+    public static class ModuleConstants
     {
-        public static class Permissions
+        public static class Settings
         {
-            public const string Access = "Skyflow:access";
-            public const string Create = "Skyflow:create";
-            public const string Read = "Skyflow:read";
-            public const string Update = "Skyflow:update";
-            public const string Delete = "Skyflow:delete";
-
-            public static string[] AllPermissions { get; } =
+            public static class General
             {
-                Access,
-                Create,
-                Read,
-                Update,
-                Delete,
-            };
-        }
-    }
+                public static readonly SettingDescriptor VaultId = new SettingDescriptor
+                {
+                    Name = "VirtoCommerce.Payment.Skyflow.VaultId",
+                    GroupName = "Payment|Skyflow",
+                    ValueType = SettingValueType.ShortText,
+                    DefaultValue = ""
+                };
 
-    public static class Settings
-    {
-        public static class General
-        {
-            public static SettingDescriptor SkyflowEnabled { get; } = new()
-            {
-                Name = "Skyflow.SkyflowEnabled",
-                GroupName = "Skyflow|General",
-                ValueType = SettingValueType.Boolean,
-                DefaultValue = false,
-            };
+                public static readonly SettingDescriptor VaultUrl = new SettingDescriptor
+                {
+                    Name = "VirtoCommerce.Payment.Skyflow.VaultUrl",
+                    GroupName = "Payment|Skyflow",
+                    ValueType = SettingValueType.ShortText,
+                    DefaultValue = ""
+                };
 
-            public static SettingDescriptor SkyflowPassword { get; } = new()
-            {
-                Name = "Skyflow.SkyflowPassword",
-                GroupName = "Skyflow|Advanced",
-                ValueType = SettingValueType.SecureString,
-                DefaultValue = "qwerty",
-            };
+                public static readonly SettingDescriptor TableName = new SettingDescriptor
+                {
+                    Name = "VirtoCommerce.Payment.Skyflow.TableName",
+                    GroupName = "Payment|Skyflow",
+                    ValueType = SettingValueType.ShortText,
+                    DefaultValue = "cards"
+                };
 
-            public static IEnumerable<SettingDescriptor> AllGeneralSettings
+                public static IEnumerable<SettingDescriptor> AllGeneralSettings
+                {
+                    get
+                    {
+                        yield return VaultId;
+                        yield return VaultUrl;
+                        yield return TableName;
+                    }
+                }
+            }
+
+            public static IEnumerable<SettingDescriptor> AllSettings
             {
                 get
                 {
-                    yield return SkyflowEnabled;
-                    yield return SkyflowPassword;
+                    return General.AllGeneralSettings;
                 }
-            }
-        }
-
-        public static IEnumerable<SettingDescriptor> AllSettings
-        {
-            get
-            {
-                return General.AllGeneralSettings;
             }
         }
     }

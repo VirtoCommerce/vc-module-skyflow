@@ -1,12 +1,14 @@
 using Microsoft.AspNetCore.Builder;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using VirtoCommerce.PaymentModule.Core.Services;
 using VirtoCommerce.Platform.Core.Modularity;
-using VirtoCommerce.Platform.Core.Security;
 using VirtoCommerce.Platform.Core.Settings;
 using VirtoCommerce.Skyflow.Core;
-using VirtoCommerce.Skyflow.Data.Repositories;
+using VirtoCommerce.Skyflow.Core.Models;
+using VirtoCommerce.Skyflow.Core.Services;
+using VirtoCommerce.Skyflow.Data.Providers;
+using VirtoCommerce.Skyflow.Data.Services;
 
 namespace VirtoCommerce.Skyflow.Web;
 
@@ -17,18 +19,10 @@ public class Module : IModule, IHasConfiguration
 
     public void Initialize(IServiceCollection serviceCollection)
     {
-        // Initialize database
-        var connectionString = Configuration.GetConnectionString(ModuleInfo.Id) ??
-                               Configuration.GetConnectionString("VirtoCommerce");
-
-        serviceCollection.AddDbContext<SkyflowDbContext>(options => options.UseSqlServer(connectionString));
-
-        // Override models
-        //AbstractTypeFactory<OriginalModel>.OverrideType<OriginalModel, ExtendedModel>().MapToType<ExtendedEntity>();
-        //AbstractTypeFactory<OriginalEntity>.OverrideType<OriginalEntity, ExtendedEntity>();
-
-        // Register services
-        //serviceCollection.AddTransient<IMyService, MyService>();
+        serviceCollection.Configure<SkyflowOptions>(Configuration.GetSection("Skyflow"));
+        serviceCollection.AddTransient<ISkyflowClient, SkyflowClient>();
+        serviceCollection.AddTransient<IPaymentClientFactory, DefaultPaymentClientFactory>();
+        serviceCollection.AddTransient<IPaymentClient, DefaultPaymentClient>();
     }
 
     public void PostInitialize(IApplicationBuilder appBuilder)
@@ -39,14 +33,13 @@ public class Module : IModule, IHasConfiguration
         var settingsRegistrar = serviceProvider.GetRequiredService<ISettingsRegistrar>();
         settingsRegistrar.RegisterSettings(ModuleConstants.Settings.AllSettings, ModuleInfo.Id);
 
-        // Register permissions
-        var permissionsRegistrar = serviceProvider.GetRequiredService<IPermissionsRegistrar>();
-        permissionsRegistrar.RegisterPermissions(ModuleInfo.Id, "Skyflow", ModuleConstants.Security.Permissions.AllPermissions);
-
-        // Apply migrations
-        using var serviceScope = serviceProvider.CreateScope();
-        using var dbContext = serviceScope.ServiceProvider.GetRequiredService<SkyflowDbContext>();
-        dbContext.Database.Migrate();
+        var paymentMethodsRegistrar = appBuilder.ApplicationServices.GetRequiredService<IPaymentMethodsRegistrar>();
+        paymentMethodsRegistrar.RegisterPaymentMethod(() => new SkyflowPaymentMethod(
+            appBuilder.ApplicationServices.GetService<ISkyflowClient>(),
+            appBuilder.ApplicationServices.GetService<IPaymentClientFactory>()
+        ));
+        //Associate the settings with the particular payment method
+        settingsRegistrar.RegisterSettingsForType(ModuleConstants.Settings.General.AllGeneralSettings, nameof(SkyflowPaymentMethod));
     }
 
     public void Uninstall()

@@ -1,27 +1,25 @@
 {
-  "Skyflow": {
-    "blades": {
-      "hello-world": {
-        "title": "Hello world blade"
+  "payment": {
+    "labels": {
+      "SkyflowPaymentMethod": {
+        "name": "Skyflow",
+        "description": "Skyflow integration"
       }
     }
   },
-  "permissions": {
-    "Skyflow:access": "Open Skyflow menu",
-    "Skyflow:create": "Create Skyflow related data",
-    "Skyflow:read": "View Skyflow related data",
-    "Skyflow:update": "Update Skyflow related data",
-    "Skyflow:delete": "Delete Skyflow related data"
-  },
   "settings": {
-    "Skyflow": {
-      "SkyflowEnabled": {
-        "title": "Skyflow Enabled",
-        "description": "Skyflow Enabled setting"
+    "VirtoCommerce.Payment.Skyflow": {
+      "VaultId": {
+        "title": "VaultId",
+        "description": "Id of the skyflow vault. Get it in the Skyflow Studio Settings."
       },
-      "SkyflowPassword": {
-        "title": "Skyflow Password",
-        "description": "Skyflow Password setting"
+      "VaultUrl": {
+        "title": "VaultUrl",
+        "description": "Url of the skyflow vault. Get it in the Skyflow Studio Settings."
+      },
+      "TableName": {
+        "title": "TableName",
+        "description": "The name of the table where you store card data."
       }
     }
   }
