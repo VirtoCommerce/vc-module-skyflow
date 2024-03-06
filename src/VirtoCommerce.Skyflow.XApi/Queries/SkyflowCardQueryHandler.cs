@@ -41,7 +41,13 @@ public class SkyflowCardQueryHandler(
 
     private async Task<ICollection<ObjectSettingEntry>> GetSettingsAsync(string storeId)
     {
-        var paymentMethodSearchResult = await paymentMethods.SearchAsync(new PaymentMethodsSearchCriteria { Keyword = nameof(SkyflowPaymentMethod), StoreId = storeId });
+        var paymentMethodSearchResult = await paymentMethods.SearchAsync(new PaymentMethodsSearchCriteria
+        {
+            Keyword = nameof(SkyflowPaymentMethod),
+            StoreId = storeId,
+            Codes = { nameof(SkyflowPaymentMethod) },
+            IsActive = true
+        });
         var paymentMethod = paymentMethodSearchResult.Results.FirstOrDefault();
 
         if (paymentMethod == null)
