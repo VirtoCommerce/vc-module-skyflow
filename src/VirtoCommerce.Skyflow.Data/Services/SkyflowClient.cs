@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Security.Cryptography;
@@ -35,6 +37,32 @@ namespace VirtoCommerce.Skyflow.Data.Services
             }
 
             return InvokeConnectionInternal(connectionOptions, request);
+        }
+
+        public async Task<IEnumerable<SkyflowCard>> GetCards(string vaultUrl, string vaultId, string tableName, string userId)
+        {
+            if (userId == null)
+            {
+                return Array.Empty<SkyflowCard>();
+            }
+            var options = _options.Connections.TryGetValue("VaultViewer", out var connection)
+                ? connection
+                : _options.Connections["Default"];
+
+            var token = await GetBearerTokenInternal(options);
+
+            var request = new HttpRequestMessage(HttpMethod.Post, $"{vaultUrl}/v1/vaults/{vaultId}/query");
+            request.Content = new StringContent(JsonConvert.SerializeObject(new { tableName, query = $"SELECT * FROM {tableName} WHERE user_id = '{userId}'" }), Encoding.UTF8, "application/json");
+            request.Headers.Add("Authorization", $"Bearer {token.AccessToken}");
+            var response = await Send(request);
+            // var str = await response.Content.ReadAsStringAsync();
+            if (!response.IsSuccessStatusCode)
+            {
+                var error = await response.Content.ReadAsStringAsync();
+                throw new InvalidOperationException(error);
+            }
+            var result = await response.Content.ReadFromJsonAsync<SkyflowResponseModel>();
+            return result.Records.Select(x => x.Fields);
         }
 
         private async Task<HttpResponseMessage> InvokeConnectionInternal(SkyflowSdkOptions options, HttpRequestMessage request)
