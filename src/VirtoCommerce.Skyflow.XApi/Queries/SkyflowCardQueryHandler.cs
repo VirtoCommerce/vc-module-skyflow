@@ -31,7 +31,7 @@ public class SkyflowCardQueryHandler(
         };
     }
 
-    private void CheckStoreId(string storeId)
+    private static void CheckStoreId(string storeId)
     {
         if (storeId.IsNullOrEmpty())
         {
@@ -61,7 +61,7 @@ public class SkyflowCardQueryHandler(
         return settings;
     }
 
-    private string GetSetting(ICollection<ObjectSettingEntry> settings, SettingDescriptor descriptor, bool throwIfNull = true)
+    private static string GetSetting(ICollection<ObjectSettingEntry> settings, SettingDescriptor descriptor, bool throwIfNull = true)
     {
         var result = settings.GetValue<string>(descriptor);
         if (throwIfNull && result.IsNullOrEmpty())
