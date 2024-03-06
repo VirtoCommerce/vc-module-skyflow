@@ -8,7 +8,11 @@
     <SonarQubeTestProject>false</SonarQubeTestProject>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="VirtoCommerce.ExperienceApiModule.Core" Version="3.800.0" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\VirtoCommerce.Skyflow.Core\VirtoCommerce.Skyflow.Core.csproj" />
     <ProjectReference Include="..\VirtoCommerce.Skyflow.Data\VirtoCommerce.Skyflow.Data.csproj" />
+    <ProjectReference Include="..\VirtoCommerce.Skyflow.XApi\VirtoCommerce.Skyflow.XApi.csproj" />
   </ItemGroup>
 </Project>

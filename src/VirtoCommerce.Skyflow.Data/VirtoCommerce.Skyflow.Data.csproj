@@ -15,7 +15,4 @@
   <ItemGroup>
     <ProjectReference Include="..\VirtoCommerce.Skyflow.Core\VirtoCommerce.Skyflow.Core.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Schemas\" />
-  </ItemGroup>
 </Project>
