@@ -16,11 +16,32 @@ public class SkyflowCardQueryHandler(
 {
     public async Task<SkyflowCardResponse> Handle(SkyflowCardQuery request, CancellationToken cancellationToken)
     {
-        if (request.StoreId.IsNullOrEmpty())
+        CheckStoreId(request.StoreId);
+        var settings = await GetSettingsAsync(request.StoreId);
+
+        var vaultId = GetSetting(settings, ModuleConstants.Settings.General.VaultId);
+        var vaultUrl = GetSetting(settings, ModuleConstants.Settings.General.VaultUrl);
+        var tableName = GetSetting(settings, ModuleConstants.Settings.General.TableName, throwIfNull: false);
+
+        var cards = await skyflowClient.GetCards(vaultUrl, vaultId, tableName, request.UserId);
+
+        return new SkyflowCardResponse
         {
-            throw new ArgumentNullException(nameof(request.StoreId));
+            Cards = cards
+        };
+    }
+
+    private void CheckStoreId(string storeId)
+    {
+        if (storeId.IsNullOrEmpty())
+        {
+            throw new ArgumentNullException(nameof(storeId));
         }
-        var paymentMethodSearchResult = await paymentMethods.SearchAsync(new PaymentMethodsSearchCriteria { Keyword = nameof(SkyflowPaymentMethod), StoreId = request.StoreId });
+    }
+
+    private async Task<ICollection<ObjectSettingEntry>> GetSettingsAsync(string storeId)
+    {
+        var paymentMethodSearchResult = await paymentMethods.SearchAsync(new PaymentMethodsSearchCriteria { Keyword = nameof(SkyflowPaymentMethod), StoreId = storeId });
         var paymentMethod = paymentMethodSearchResult.Results.FirstOrDefault();
 
         if (paymentMethod == null)
@@ -31,24 +52,17 @@ public class SkyflowCardQueryHandler(
         await settingsManager.DeepLoadSettingsAsync(paymentMethod);
 
         var settings = paymentMethod.Settings;
+        return settings;
+    }
 
-        var vaultId = settings.GetValue<string>(ModuleConstants.Settings.General.VaultId);
-        if (vaultId.IsNullOrEmpty())
+    private string GetSetting(ICollection<ObjectSettingEntry> settings, SettingDescriptor descriptor, bool throwIfNull = true)
+    {
+        var result = settings.GetValue<string>(descriptor);
+        if (throwIfNull && result.IsNullOrEmpty())
         {
-            throw new InvalidOperationException("VaultId is not set");
+            throw new InvalidOperationException($"Setting {descriptor.Name} is not set");
         }
-        var vaultUrl = settings.GetValue<string>(ModuleConstants.Settings.General.VaultUrl);
-        if (vaultUrl.IsNullOrEmpty())
-        {
-            throw new InvalidOperationException("VaultUrl is not set");
-        }
-        var tableName = settings.GetValue<string>(ModuleConstants.Settings.General.TableName);
 
-        var cards = await skyflowClient.GetCards(vaultUrl, vaultId, tableName, request.UserId);
-
-        return new SkyflowCardResponse
-        {
-            Cards = cards
-        };
+        return result;
     }
 }

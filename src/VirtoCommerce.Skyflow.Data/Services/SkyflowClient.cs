@@ -45,17 +45,17 @@ namespace VirtoCommerce.Skyflow.Data.Services
             {
                 return Array.Empty<SkyflowCard>();
             }
-            var options = _options.Connections.TryGetValue("VaultViewer", out var connection)
+            var connectionOptions = _options.Connections.TryGetValue("VaultViewer", out var connection)
                 ? connection
                 : _options.Connections["Default"];
 
-            var token = await GetBearerTokenInternal(options);
+            var token = await GetBearerTokenInternal(connectionOptions);
 
             var request = new HttpRequestMessage(HttpMethod.Post, $"{vaultUrl.TrimEnd('/')}/v1/vaults/{vaultId}/query");
             request.Content = new StringContent(JsonConvert.SerializeObject(new { tableName, query = $"SELECT * FROM {tableName} WHERE user_id = '{userId}'" }), Encoding.UTF8, "application/json");
             request.Headers.Add("Authorization", $"Bearer {token.AccessToken}");
             var response = await Send(request);
-            // var str = await response.Content.ReadAsStringAsync();
+
             if (!response.IsSuccessStatusCode)
             {
                 var error = await response.Content.ReadAsStringAsync();
