@@ -11,5 +11,6 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\VirtoCommerce.Skyflow.Core\VirtoCommerce.Skyflow.Core.csproj" />
+    <ProjectReference Include="..\VirtoCommerce.Skyflow.Data\VirtoCommerce.Skyflow.Data.csproj" />
   </ItemGroup>
 </Project>

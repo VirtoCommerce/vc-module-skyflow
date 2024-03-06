@@ -51,7 +51,7 @@ namespace VirtoCommerce.Skyflow.Data.Services
 
             var token = await GetBearerTokenInternal(options);
 
-            var request = new HttpRequestMessage(HttpMethod.Post, $"{vaultUrl}/v1/vaults/{vaultId}/query");
+            var request = new HttpRequestMessage(HttpMethod.Post, $"{vaultUrl.TrimEnd('/')}/v1/vaults/{vaultId}/query");
             request.Content = new StringContent(JsonConvert.SerializeObject(new { tableName, query = $"SELECT * FROM {tableName} WHERE user_id = '{userId}'" }), Encoding.UTF8, "application/json");
             request.Headers.Add("Authorization", $"Bearer {token.AccessToken}");
             var response = await Send(request);
