@@ -102,6 +102,8 @@ namespace VirtoCommerce.Skyflow.Data.Services
             return CreateErrorResult(request, responseText, "Unexpected response");
         }
 
+        public string[] RequiredParameters { get; } = new[] { "card_number", "card_expiration", "cvv" };
+
         private static PostProcessPaymentRequestResult CreateErrorResult(PaymentRequestBase request, string responseText, string message)
         {
             var payment = (PaymentIn)request.Payment;

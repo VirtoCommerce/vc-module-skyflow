@@ -39,4 +39,14 @@ namespace VirtoCommerce.Skyflow.Core.Models
     {
         public IEnumerable<SkyflowItemModel> Records { get; set; }
     }
+
+    public class SkyflowTableModel
+    {
+        public IDictionary<string, string> Fields { get; set; }
+    }
+
+    public class SkyflowTableResponseModel
+    {
+        public IEnumerable<SkyflowTableModel> Records { get; set; }
+    }
 }

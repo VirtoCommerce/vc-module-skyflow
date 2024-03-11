@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Linq;
 using VirtoCommerce.OrdersModule.Core.Model;
 using VirtoCommerce.PaymentModule.Core.Model;
 using VirtoCommerce.PaymentModule.Model.Requests;
@@ -43,6 +44,24 @@ namespace VirtoCommerce.Skyflow.Data.Providers
         {
             var paymentClient = paymentClientFactory.GetPaymentClient(request);
             var connectionName = paymentClientFactory.GetConnectionName(request);
+
+            if (paymentClient.RequiredParameters.FirstOrDefault(x => request.Parameters.AllKeys.All(k => k != x)) != null)
+            {
+                var skyflowId = request.Parameters["skyflow_id"];
+                if (string.IsNullOrEmpty(skyflowId))
+                {
+                    throw new InvalidOperationException("Skyflow ID is required");
+                }
+                var vaultId = Settings.GetValue<string>(ModuleConstants.Settings.General.VaultId);
+                var vaultUrl = Settings.GetValue<string>(ModuleConstants.Settings.General.VaultUrl);
+                var tableName = Settings.GetValue<string>(ModuleConstants.Settings.General.TableName);
+
+                var tokens = skyflowClient.GetCardTokens(vaultUrl, vaultId, tableName, skyflowId).GetAwaiter().GetResult();
+                foreach (var key in tokens.Keys)
+                {
+                    request.Parameters[key] = tokens[key]?.ToString();
+                }
+            }
 
             using var requestMessage = paymentClient.CreateConnectionRequest(request);
             using var responseMessage = skyflowClient.InvokeConnection(connectionName, requestMessage).GetAwaiter().GetResult();

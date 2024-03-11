@@ -39,8 +39,37 @@ namespace VirtoCommerce.Skyflow.Data.Services
             return InvokeConnectionInternal(connectionOptions, request);
         }
 
+        public async Task<IEnumerable<IDictionary<string, string>>> GetTableData(string vaultUrl, string vaultId, string tableName,
+            string userId)
+        {
+            // required the Vault Viewer permission
+            if (userId == null)
+            {
+                return Array.Empty<IDictionary<string, string>>();
+            }
+            var connectionOptions = _options.Connections.TryGetValue("VaultViewer", out var connection)
+                ? connection
+                : _options.Connections["Default"];
+
+            var token = await GetBearerTokenInternal(connectionOptions);
+
+            var request = new HttpRequestMessage(HttpMethod.Post, $"{vaultUrl.TrimEnd('/')}/v1/vaults/{vaultId}/query");
+            request.Content = new StringContent(JsonConvert.SerializeObject(new { tableName, query = $"SELECT * FROM {tableName} WHERE user_id = '{userId}'" }), Encoding.UTF8, "application/json");
+            request.Headers.Add("Authorization", $"Bearer {token.AccessToken}");
+            var response = await Send(request);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var error = await response.Content.ReadAsStringAsync();
+                throw new InvalidOperationException(error);
+            }
+            var result = await response.Content.ReadFromJsonAsync<SkyflowTableResponseModel>();
+            return result.Records.Select(x => x.Fields);
+        }
+
         public async Task<IEnumerable<SkyflowCard>> GetCards(string vaultUrl, string vaultId, string tableName, string userId)
         {
+            // required the Vault Viewer permission
             if (userId == null)
             {
                 return Array.Empty<SkyflowCard>();
@@ -63,6 +92,27 @@ namespace VirtoCommerce.Skyflow.Data.Services
             }
             var result = await response.Content.ReadFromJsonAsync<SkyflowResponseModel>();
             return result.Records.Select(x => x.Fields);
+        }
+
+        public async Task<IDictionary<string, string>> GetCardTokens(string vaultUrl, string vaultId, string tableName, string skyflowId)
+        {
+            // required the Vault Owner permission
+            var connectionOptions = _options.Connections.TryGetValue("VaultOwner", out var connection)
+                ? connection
+                : _options.Connections["Default"];
+
+            var token = await GetBearerTokenInternal(connectionOptions);
+            var request = new HttpRequestMessage(HttpMethod.Get, $"{vaultUrl.TrimEnd('/')}/v1/vaults/{vaultId}/{tableName}/{skyflowId}?tokenization=true");
+            request.Headers.Add("Authorization", $"Bearer {token.AccessToken}");
+            var response = await Send(request);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var error = await response.Content.ReadAsStringAsync();
+                throw new InvalidOperationException(error);
+            }
+            var result = await response.Content.ReadFromJsonAsync<SkyflowTableModel>();
+            return result.Fields;
         }
 
         private async Task<HttpResponseMessage> InvokeConnectionInternal(SkyflowSdkOptions options, HttpRequestMessage request)
