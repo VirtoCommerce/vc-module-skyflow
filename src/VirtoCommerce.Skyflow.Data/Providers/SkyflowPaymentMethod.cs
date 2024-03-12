@@ -8,6 +8,7 @@ using VirtoCommerce.PaymentModule.Model.Requests;
 using VirtoCommerce.Platform.Core.Settings;
 using VirtoCommerce.Skyflow.Core;
 using VirtoCommerce.Skyflow.Core.Services;
+using VirtoCommerce.Skyflow.Data.Extensions;
 
 namespace VirtoCommerce.Skyflow.Data.Providers
 {
@@ -52,14 +53,22 @@ namespace VirtoCommerce.Skyflow.Data.Providers
                 {
                     throw new InvalidOperationException("Skyflow ID is required");
                 }
-                var vaultId = Settings.GetValue<string>(ModuleConstants.Settings.General.VaultId);
-                var vaultUrl = Settings.GetValue<string>(ModuleConstants.Settings.General.VaultUrl);
-                var tableName = Settings.GetValue<string>(ModuleConstants.Settings.General.TableName);
 
-                var tokens = skyflowClient.GetCardTokens(vaultUrl, vaultId, tableName, skyflowId).GetAwaiter().GetResult();
+                var config = Settings.GetSkyflowStoreConfig();
+                var tokens = skyflowClient.GetCardTokens(config, skyflowId).GetAwaiter().GetResult();
+
+                // by some reason Skyflow doesn't return user_id. So this validation is commented out
+                //var order = (CustomerOrder)request.Order;
+                //var userId = order.CustomerId;
+
+                //if (tokens["user_id"] != userId)
+                //{
+                //    throw new InvalidOperationException("Skyflow ID does not belong to the user");
+                //}
+
                 foreach (var key in tokens.Keys)
                 {
-                    request.Parameters[key] = tokens[key]?.ToString();
+                    request.Parameters[key] = tokens[key];
                 }
             }
 

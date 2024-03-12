@@ -1,6 +1,7 @@
 using GraphQL;
 using GraphQL.Types;
 using VirtoCommerce.ExperienceApiModule.Core.BaseQueries;
+using VirtoCommerce.ExperienceApiModule.Core.Extensions;
 
 namespace VirtoCommerce.Skyflow.XApi.Queries;
 
@@ -11,13 +12,12 @@ public class SkyflowCardQuery : Query<SkyflowCardResponse>
 
     public override IEnumerable<QueryArgument> GetArguments()
     {
-        yield return Argument<StringGraphType>(nameof(UserId));
         yield return Argument<StringGraphType>(nameof(StoreId));
     }
 
     public override void Map(IResolveFieldContext context)
     {
-        UserId = context.GetArgument<string>(nameof(UserId));
+        UserId = context.GetCurrentUserId();
         StoreId = context.GetArgument<string>(nameof(StoreId))!;
     }
 }

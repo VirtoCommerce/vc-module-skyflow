@@ -9,8 +9,8 @@ namespace VirtoCommerce.Skyflow.Core.Services
     {
         Task<SkyflowBearerTokenResponse> GetBearerToken();
         Task<HttpResponseMessage> InvokeConnection(string connectionName, HttpRequestMessage request);
-        Task<IEnumerable<SkyflowCard>> GetCards(string vaultUrl, string vaultId, string tableName, string userId);
-        Task<IEnumerable<IDictionary<string, string>>> GetTableData(string vaultUrl, string vaultId, string tableName, string userId);
-        Task<IDictionary<string, string>> GetCardTokens(string vaultUrl, string vaultId, string tableName, string skyflowId);
+        Task<IEnumerable<SkyflowCard>> GetCards(SkyflowStoreConfig config, string userId);
+        Task<IDictionary<string, string>> GetCardTokens(SkyflowStoreConfig config, string skyflowId);
+        Task<bool> DeleteCard(SkyflowStoreConfig config, string skyflowId);
     }
 }

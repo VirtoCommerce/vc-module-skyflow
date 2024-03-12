@@ -5,6 +5,9 @@ namespace VirtoCommerce.Skyflow.Core
 {
     public static class ModuleConstants
     {
+        public static string VaultViewerRoleConfigName = "VaultViewer";
+        public static string VaultOwnerRoleConfigName = "VaultOwner";
+
         public static class Settings
         {
             public static class General

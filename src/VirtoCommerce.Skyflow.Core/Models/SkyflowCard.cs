@@ -40,13 +40,15 @@ namespace VirtoCommerce.Skyflow.Core.Models
         public IEnumerable<SkyflowItemModel> Records { get; set; }
     }
 
-    public class SkyflowTableModel
+    public class SkyflowTableRowModel
     {
         public IDictionary<string, string> Fields { get; set; }
     }
 
-    public class SkyflowTableResponseModel
+    public class SkyflowDeleteResponseModel
     {
-        public IEnumerable<SkyflowTableModel> Records { get; set; }
+        [JsonPropertyName("skyflow_id")]
+        public string SkyflowId { get; set; }
+        public bool Deleted { get; set; }
     }
 }
