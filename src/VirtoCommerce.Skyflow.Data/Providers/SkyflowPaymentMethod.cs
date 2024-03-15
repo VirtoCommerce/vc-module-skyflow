@@ -55,16 +55,15 @@ namespace VirtoCommerce.Skyflow.Data.Providers
                 }
 
                 var config = Settings.GetSkyflowStoreConfig();
-                var tokens = skyflowClient.GetCardTokens(config, skyflowId).GetAwaiter().GetResult();
+                var order = (CustomerOrder)request.Order;
+                var userId = order.CustomerId;
 
-                // by some reason Skyflow doesn't return user_id. So this validation is commented out
-                //var order = (CustomerOrder)request.Order;
-                //var userId = order.CustomerId;
+                var tokens = skyflowClient.GetCardTokens(config, skyflowId, userId).GetAwaiter().GetResult();
 
-                //if (tokens["user_id"] != userId)
-                //{
-                //    throw new InvalidOperationException("Skyflow ID does not belong to the user");
-                //}
+                if (tokens == null)
+                {
+                    throw new InvalidOperationException("Skyflow ID does not belong to the user");
+                }
 
                 foreach (var key in tokens.Keys)
                 {
@@ -73,7 +72,8 @@ namespace VirtoCommerce.Skyflow.Data.Providers
             }
 
             using var requestMessage = paymentClient.CreateConnectionRequest(request);
-            using var responseMessage = skyflowClient.InvokeConnection(connectionName, requestMessage).GetAwaiter().GetResult();
+            using var responseMessage = skyflowClient.InvokeConnection(connectionName, requestMessage)
+                .GetAwaiter().GetResult();
 
             var result = paymentClient.CreatePostProcessPaymentResponse(request, responseMessage);
             return result;
