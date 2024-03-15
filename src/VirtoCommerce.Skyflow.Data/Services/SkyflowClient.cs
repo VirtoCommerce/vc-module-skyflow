@@ -59,26 +59,9 @@ namespace VirtoCommerce.Skyflow.Data.Services
         public async Task<IDictionary<string, string>> GetCardTokens(SkyflowStoreConfig config, string skyflowId, string userId)
         {
             // required the Vault Owner permission
-            // by some reason Skyflow doesn't return user_id. So this approach is commented out
-            //var url = $"{config.VaultUrl.TrimEnd('/')}/v1/vaults/{config.VaultId}/{config.TableName}/{skyflowId}?tokenization=true";
-            //var result = await GetSkyflowResponse<SkyflowTableRowModel>(HttpMethod.Get, url, ModuleConstants.VaultOwnerRoleConfigName);
-            //return result.Fields;
-
-            var url = $"{config.VaultUrl.TrimEnd('/')}/v1/vaults/{config.VaultId}/query";
-            var body = JsonConvert.SerializeObject(new { config.TableName, query = $"SELECT * FROM {config.TableName} WHERE user_id = '{userId}' and skyflow_id = '{skyflowId}'" });
-            var result = await GetSkyflowResponse<SkyflowResponseModel>(HttpMethod.Post, url, ModuleConstants.VaultViewerRoleConfigName, body);
-
-            var card = result.Records.Select(x => x.Fields).FirstOrDefault();
-
-            if (card == null)
-            {
-                return null;
-            }
-
-            var cardJson = JsonConvert.SerializeObject(card);
-            var cardTokens = JsonConvert.DeserializeObject<Dictionary<string, string>>(cardJson);
-
-            return cardTokens;
+            var url = $"{config.VaultUrl.TrimEnd('/')}/v1/vaults/{config.VaultId}/{config.TableName}/{skyflowId}";
+            var result = await GetSkyflowResponse<SkyflowTableRowModel>(HttpMethod.Get, url, ModuleConstants.VaultOwnerRoleConfigName);
+            return result.Fields;
         }
 
         public async Task<bool> DeleteCard(SkyflowStoreConfig config, string skyflowId)
