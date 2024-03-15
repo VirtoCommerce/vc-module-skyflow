@@ -1,12 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Linq;
 using VirtoCommerce.OrdersModule.Core.Model;
 using VirtoCommerce.PaymentModule.Core.Model;
 using VirtoCommerce.PaymentModule.Model.Requests;
 using VirtoCommerce.Platform.Core.Settings;
 using VirtoCommerce.Skyflow.Core;
 using VirtoCommerce.Skyflow.Core.Services;
+using VirtoCommerce.Skyflow.Data.Extensions;
 
 namespace VirtoCommerce.Skyflow.Data.Providers
 {
@@ -44,8 +46,34 @@ namespace VirtoCommerce.Skyflow.Data.Providers
             var paymentClient = paymentClientFactory.GetPaymentClient(request);
             var connectionName = paymentClientFactory.GetConnectionName(request);
 
+            if (paymentClient.RequiredParameters.FirstOrDefault(x => request.Parameters.AllKeys.All(k => k != x)) != null)
+            {
+                var skyflowId = request.Parameters["skyflow_id"];
+                if (string.IsNullOrEmpty(skyflowId))
+                {
+                    throw new InvalidOperationException("Skyflow ID is required");
+                }
+
+                var config = Settings.GetSkyflowStoreConfig();
+                var order = (CustomerOrder)request.Order;
+                var userId = order.CustomerId;
+
+                var tokens = skyflowClient.GetCardTokens(config, skyflowId).GetAwaiter().GetResult();
+
+                if (tokens["user_id"] != userId)
+                {
+                    throw new InvalidOperationException("Skyflow ID does not belong to the user");
+                }
+
+                foreach (var key in tokens.Keys)
+                {
+                    request.Parameters[key] = tokens[key];
+                }
+            }
+
             using var requestMessage = paymentClient.CreateConnectionRequest(request);
-            using var responseMessage = skyflowClient.InvokeConnection(connectionName, requestMessage).GetAwaiter().GetResult();
+            using var responseMessage = skyflowClient.InvokeConnection(connectionName, requestMessage)
+                .GetAwaiter().GetResult();
 
             var result = paymentClient.CreatePostProcessPaymentResponse(request, responseMessage);
             return result;

@@ -1,4 +1,3 @@
-
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.2.32630.192
@@ -26,6 +25,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		VirtoCommerce.Skyflow.sln.DotSettings = VirtoCommerce.Skyflow.sln.DotSettings
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VirtoCommerce.Skyflow.XApi", "src\VirtoCommerce.Skyflow.XApi\VirtoCommerce.Skyflow.XApi.csproj", "{3E72A6DC-D56C-4899-82F2-7F6F20A45A85}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -48,6 +49,10 @@ Global
 		{564DE2F9-721E-499C-8ABA-9C7C7D00DE5F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{564DE2F9-721E-499C-8ABA-9C7C7D00DE5F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{564DE2F9-721E-499C-8ABA-9C7C7D00DE5F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3E72A6DC-D56C-4899-82F2-7F6F20A45A85}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3E72A6DC-D56C-4899-82F2-7F6F20A45A85}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3E72A6DC-D56C-4899-82F2-7F6F20A45A85}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3E72A6DC-D56C-4899-82F2-7F6F20A45A85}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -57,6 +62,7 @@ Global
 		{2B6180F3-14E4-420B-A762-F1A6A5EE448C} = {DE724EB1-A92C-45DB-A32E-FEDEF920F936}
 		{83316588-1E5C-43FB-9BF5-46409B3ABCD3} = {DE724EB1-A92C-45DB-A32E-FEDEF920F936}
 		{564DE2F9-721E-499C-8ABA-9C7C7D00DE5F} = {8F3381A9-C371-478D-97AA-5DB239C9F542}
+		{3E72A6DC-D56C-4899-82F2-7F6F20A45A85} = {DE724EB1-A92C-45DB-A32E-FEDEF920F936}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {41A8B07F-071C-4CD6-AB4B-EEBB8910716A}
