@@ -44,7 +44,7 @@ namespace VirtoCommerce.Skyflow.Data.Services
         public async Task<IEnumerable<SkyflowCard>> GetCards(SkyflowStoreConfig config, string userId)
         {
             // required the Vault Viewer permission
-            if (userId == null || userId == "Anonymous")
+            if (userId is null or "Anonymous")
             {
                 return Array.Empty<SkyflowCard>();
             }
@@ -56,7 +56,7 @@ namespace VirtoCommerce.Skyflow.Data.Services
             return result.Records.Select(x => x.Fields);
         }
 
-        public async Task<IDictionary<string, string>> GetCardTokens(SkyflowStoreConfig config, string skyflowId, string userId)
+        public async Task<IDictionary<string, string>> GetCardTokens(SkyflowStoreConfig config, string skyflowId)
         {
             // required the Vault Owner permission
             var url = $"{config.VaultUrl.TrimEnd('/')}/v1/vaults/{config.VaultId}/{config.TableName}/{skyflowId}";

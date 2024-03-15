@@ -58,9 +58,9 @@ namespace VirtoCommerce.Skyflow.Data.Providers
                 var order = (CustomerOrder)request.Order;
                 var userId = order.CustomerId;
 
-                var tokens = skyflowClient.GetCardTokens(config, skyflowId, userId).GetAwaiter().GetResult();
+                var tokens = skyflowClient.GetCardTokens(config, skyflowId).GetAwaiter().GetResult();
 
-                if (tokens == null)
+                if (tokens["user_id"] != userId)
                 {
                     throw new InvalidOperationException("Skyflow ID does not belong to the user");
                 }
