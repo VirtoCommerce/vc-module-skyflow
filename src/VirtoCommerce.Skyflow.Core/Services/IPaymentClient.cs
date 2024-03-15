@@ -7,5 +7,6 @@ namespace VirtoCommerce.Skyflow.Core.Services
     {
         HttpRequestMessage CreateConnectionRequest(PaymentRequestBase request);
         PostProcessPaymentRequestResult CreatePostProcessPaymentResponse(PaymentRequestBase request, HttpResponseMessage responseMessage);
+        string[] RequiredParameters { get; }
     }
 }
