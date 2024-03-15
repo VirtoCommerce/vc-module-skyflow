@@ -59,9 +59,16 @@ namespace VirtoCommerce.Skyflow.Data.Services
         public async Task<IDictionary<string, string>> GetCardTokens(SkyflowStoreConfig config, string skyflowId)
         {
             // required the Vault Owner permission
+
+            // get escaped data to receive userId
             var url = $"{config.VaultUrl.TrimEnd('/')}/v1/vaults/{config.VaultId}/{config.TableName}/{skyflowId}";
             var result = await GetSkyflowResponse<SkyflowTableRowModel>(HttpMethod.Get, url, ModuleConstants.VaultOwnerRoleConfigName);
-            return result.Fields;
+
+            // get tokenized data
+            var tokenUrl = $"{config.VaultUrl.TrimEnd('/')}/v1/vaults/{config.VaultId}/{config.TableName}/{skyflowId}?tokenization=true";
+            var tokenResult = await GetSkyflowResponse<SkyflowTableRowModel>(HttpMethod.Get, tokenUrl, ModuleConstants.VaultOwnerRoleConfigName);
+            tokenResult.Fields.Add("user_id", result.Fields["user_id"]);
+            return tokenResult.Fields;
         }
 
         public async Task<bool> DeleteCard(SkyflowStoreConfig config, string skyflowId)
