@@ -8,7 +8,7 @@ The module implements integration with [SkyFlow](https://www.skyflow.com/): Data
 * **Production-Ready Integration with Authorize.NET:** Fully functional integration with Authorize.NET payment providers, ready for production use.
 * **Flexible Customization:** Utilize the power of Virto Commerce Native Extensibility Framework and SkyFlow to integrate with a wide range of payment providers, tailored to your specific needs.
 * **Optimized for Marketplaces:** Marketplaces can effortlessly connect with various Payment Service Providers preferred by individual suppliers, facilitating diverse payment options for customers.
-* **Saved Credit Card (Coming Soon):** Soon, customers will have the option to securely save their credit card information for future transactions, enhancing convenience and speed of checkout.
+* **Saved Credit Card:** Customers have the option to securely save their credit card information for future transactions, enhancing convenience and speed of checkout.
 
 ## Prerequisites:
 1. **SkyFlow Account:** Ensure you have created and configured your [SkyFlow Account](https://www.skyflow.com/) to leverage the full capabilities of the module.
