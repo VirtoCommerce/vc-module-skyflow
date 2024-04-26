@@ -9,8 +9,8 @@
     <dependency id="VirtoCommerce.Payment" version="3.800.0" />
   </dependencies>
 
-  <title>VirtoCommerce Skyflow module</title>
-  <description>VirtoCommerce Skyflow module</description>
+  <title>Skyflow</title>
+  <description>SkyFlow Integration as payment provider enables a unified user experience for Credit Card transactions across diverse payment providers.</description>
 
   <authors>
     <author>Vasily Kotov</author>
