@@ -1,5 +1,5 @@
 # Integration with SkyFlow
-The module implements integration with [SkyFlow](https://www.skyflow.com/): Data Privacy Vault service. 
+The module implements integration with [SkyFlow](https://www.skyflow.com/): Data Privacy Vault service.
 
 ## Key Features:
 * **Unified Credit Card User Experience:** Elevate your users' payment journey with a unified experience for credit card transactions across diverse payment providers.
@@ -73,25 +73,25 @@ This setup documentation provides step-by-step instructions for secure payment p
 ```json
 {
   "Payments": {
-    "Skyflow": {
-      "tokenURI": "https://manage.skyflowapis.com/v1/auth/sa/oauth/token",
-      "clientSDK": {
-        "clientID": "b7eeb4df0007492cbef5bd1000000000",
-        "keyID": "i24bb5b53c114f1c9531db69000000000",
-        "privateKey": "-----BEGIN PRIVATE KEY---TODO---END PRIVATE KEY-----"
+    "SkyFlow": {
+      "tokenURI": "https://manage.skyflowapis-preview.com/v1/auth/sa/oauth/token",
+      "vaultURI": "https://a370a9658141.vault.skyflowapis-preview.com",
+      "gatewayURI": "https://a370a9658141.gateway.skyflowapis-preview.com",
+      "vaultId": "ff9fc275bec848318361cc8928e094d1",
+      "tableName": "credit_cards",
+      "PaymentFormAccount": {
+        "clientID": "j873500104e6439bbbeb8cec63a6d21",
+        "keyID": "a70d977de5f24532810df376585031aa",
+        "privateKey": "-----BEGIN PRIVATE KEY-----Base64-----END PRIVATE KEY-----"
       },
-      "Connections": {
-        "Default": {
-          "clientID": "ca2836c68afa4546b6e09b000000000",
-          "keyID": "hd75811c6f4b4ed4835eda00000000",
-          "privateKey": "-----BEGIN PRIVATE KEY---TODO---END PRIVATE KEY-----"
-        }
+      "IntegrationsAccount": {
+        "clientID": "b47bea9c61c74cf4aac3b26d09aaf825",
+        "keyID": "c950c459157548f0817500288ec8ac96",
+        "privateKey": "-----BEGIN PRIVATE KEY-----Base64-----END PRIVATE KEY-----"
       },
-      "DefaultConnection": {
-        "connectionUrl": "https://ebfc00000000.gateway.skyflowapis.com/v1/gateway/outboundRoutes/gfb5ce07e91340efac348a2df00000000/xml/v1/request.api",
-        "name": "TODO:YOURID",
-        "transactionKey": "TODO:YOUR_TRANSACTION_KEY"
-      }
+      "DefaultPaymentMethod": "AuthorizeNetPaymentMethod",
+      "DefaultConnectionRoute": "b47bea9c61c74cf4aac3b26d09aaf825/xml"
+
     }
   }
 }
