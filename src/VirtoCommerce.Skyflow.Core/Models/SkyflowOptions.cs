@@ -55,11 +55,11 @@ namespace VirtoCommerce.Skyflow.Core.Models
         /// <summary>
         /// Payment method type name that will be used for payment processing on behalf of skyflow
         /// </summary>
-        public string DefaultPaymentMethod { get; set; }
+        public string TargetPaymentMethod { get; set; }
         /// <summary>
-        /// "{GatewayUri}/v1/gateway/outboundRoutes/{DefaultConnectionRoute}
+        /// "{GatewayUri}/v1/gateway/outboundRoutes/{TargetConnectionRoute}
         /// </summary>
-        public string DefaultConnectionRoute { get; set; }
+        public string TargetConnectionRoute { get; set; }
     }
 
     public class SkyFlowServiceAccountOptions

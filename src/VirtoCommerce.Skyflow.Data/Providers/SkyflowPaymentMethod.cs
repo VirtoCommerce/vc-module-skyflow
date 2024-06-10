@@ -59,18 +59,18 @@ namespace VirtoCommerce.Skyflow.Data.Providers
             return PostProcessPaymentAsync(request).GetAwaiter().GetResult();
         }
 
-        protected virtual async Task<PaymentMethod> GetDecoratedPaymentMethod(PostProcessPaymentRequest request)
+        protected virtual async Task<PaymentMethod> GetTargetPaymentMethod(PostProcessPaymentRequest request)
         {
             var paymentMethod = (await _paymentMethodsRegistrar.GetRegisteredPaymentMethods()).FirstOrDefault(x => x.TypeName.EqualsInvariant(_options.DefaultPaymentMethod));
             if (paymentMethod == null)
             {
-                throw new OperationCanceledException("Payment method not found. Please check the Payments:Skyflow:DefaultPaymentMethod setting");
+                throw new OperationCanceledException("Payment method not found. Please check the Payments:Skyflow:TargetPaymentMethod setting");
             }
             return paymentMethod;
         }
         private async Task<PostProcessPaymentRequestResult> PostProcessPaymentAsync(PostProcessPaymentRequest request)
         {
-            var paymentMethod = await GetDecoratedPaymentMethod(request);
+            var paymentMethod = await GetTargetPaymentMethod(request);
 
             var skyflowId = request.Parameters["skyflow_id"];
             if (string.IsNullOrEmpty(skyflowId))
@@ -79,7 +79,6 @@ namespace VirtoCommerce.Skyflow.Data.Providers
             }
 
             var order = (CustomerOrder)request.Order;
-            var userId = order.CustomerId;
 
             var skyFlowCard = await _skyFlowClient.GetCard(skyflowId);
             if (skyFlowCard == null)
