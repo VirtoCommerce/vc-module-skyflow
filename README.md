@@ -49,7 +49,7 @@ This setup documentation provides step-by-step instructions for secure payment p
 #### Import vault schema
 1. **Sign in to Skyflow Studio.**
 2. On the home screen with the list of vaults. Select `Add vault`-> `upload vault schema`
-3. Upload the schema from [vaultSchema.json](./docs/media/vaultSchema.json)
+3. Upload the default vault schema [vaultSchema.json](./docs/media/vaultSchema.json)
 
 
 
