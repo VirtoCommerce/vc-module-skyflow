@@ -61,7 +61,7 @@ ALLOW READ ON credit_cards.* WITH REDACTION = DEFAULT
 ALLOW TOKENIZATION ON credit_cards.*
 ALLOW READ ON credit_cards.card_expiration WITH REDACTION = PLAIN_TEXT
 ```
-1. 'Vault writer'
+1. 'Vault writer' role with the folowing policies
 ```
 ALLOW CREATE ON credit_cards.*
 ALLOW TOKENIZATION ON credit_cards.*
@@ -71,7 +71,7 @@ Create the two service accounts
 Vault -> Service Accounts -> Add Service Account
 1. Use name `Payment form account`  and assign the role `Vault writer`.
 2. Use name `Integrations account` and assign the role `Integrations invoker`.
-To download the `credentials.json` files for each service account and keep it on the safe place.
+Download the `credentials.json` files for each service account and keep them on the secure place.
 
 
 #### Creating Authorize.NET SkyFlow Connection
