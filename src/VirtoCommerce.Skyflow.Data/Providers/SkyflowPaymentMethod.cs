@@ -15,7 +15,7 @@ using VirtoCommerce.Skyflow.Core.Services;
 
 namespace VirtoCommerce.Skyflow.Data.Providers
 {
-    public class SkyflowPaymentMethod: PaymentMethod
+    public class SkyflowPaymentMethod : PaymentMethod
     {
         private readonly SkyflowOptions _options;
         private readonly ISkyflowClient _skyFlowClient;
@@ -24,13 +24,13 @@ namespace VirtoCommerce.Skyflow.Data.Providers
             ISkyflowClient skyflowClient,
             IPaymentMethodsRegistrar paymentMethodsRegistrar,
             IOptions<SkyflowOptions> options)
-            :base(nameof(SkyflowPaymentMethod))
+            : base(nameof(SkyflowPaymentMethod))
         {
             _skyFlowClient = skyflowClient;
             _options = options.Value;
             _paymentMethodsRegistrar = paymentMethodsRegistrar;
         }
-   
+
         public override ProcessPaymentRequestResult ProcessPayment(ProcessPaymentRequest request)
         {
             var tokenResponse = _skyFlowClient.GetBearerToken(_options.PaymentFormAccount).GetAwaiter().GetResult();
@@ -61,7 +61,7 @@ namespace VirtoCommerce.Skyflow.Data.Providers
 
         protected virtual async Task<PaymentMethod> GetTargetPaymentMethod(PostProcessPaymentRequest request)
         {
-            var paymentMethod = (await _paymentMethodsRegistrar.GetRegisteredPaymentMethods()).FirstOrDefault(x => x.TypeName.EqualsInvariant(_options.DefaultPaymentMethod));
+            var paymentMethod = (await _paymentMethodsRegistrar.GetRegisteredPaymentMethods()).FirstOrDefault(x => x.TypeName.EqualsInvariant(_options.TargetPaymentMethod));
             if (paymentMethod == null)
             {
                 throw new OperationCanceledException("Payment method not found. Please check the Payments:Skyflow:TargetPaymentMethod setting");
@@ -91,7 +91,7 @@ namespace VirtoCommerce.Skyflow.Data.Providers
             }
             request.Parameters["CreditCard"] = JsonConvert.SerializeObject(skyFlowCard);
             request.Parameters["ProxyHttpClientName"] = "SkyFlow";
-            request.Parameters["ProxyEndpointUrl"] = new Uri($"{_options.GatewayUri}/v1/gateway/outboundRoutes/{_options.DefaultConnectionRoute}").ToString();
+            request.Parameters["ProxyEndpointUrl"] = new Uri($"{_options.GatewayUri}/v1/gateway/outboundRoutes/{_options.TargetConnectionRoute}").ToString();
             var result = paymentMethod.PostProcessPayment(request);
             return result;
         }
