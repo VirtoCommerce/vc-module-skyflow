@@ -33,14 +33,14 @@ public class Module : IModule, IHasConfiguration
         serviceCollection.AddTransient<ISkyflowClient, SkyflowClient>();
         serviceCollection.AddTransient<SkyflowPaymentMethod>();
         serviceCollection.AddTransient<SkyflowAuthorizationHandler>();
-        serviceCollection.AddHttpClient("SkyFlow")
+        serviceCollection.AddHttpClient("Skyflow")
           .AddHttpMessageHandler<SkyflowAuthorizationHandler>();
 
     }
 
     public void PostInitialize(IApplicationBuilder appBuilder)
     {
-        var serviceProvider = appBuilder.ApplicationServices;      
+        var serviceProvider = appBuilder.ApplicationServices;
         var paymentMethodsRegistrar = appBuilder.ApplicationServices.GetRequiredService<IPaymentMethodsRegistrar>();
         paymentMethodsRegistrar.RegisterPaymentMethod(() => appBuilder.ApplicationServices.GetService<SkyflowPaymentMethod>());
     }

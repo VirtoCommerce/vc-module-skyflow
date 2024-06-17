@@ -5,7 +5,7 @@ namespace VirtoCommerce.Skyflow.Core.Models
     public class SkyflowOptions
     {
         /// <summary>
-        ///  url uses for receiving auth token to consume SkyFlow api. (can be taken from credentials.json file download from Skyflow dashboard)
+        ///  url uses for receiving auth token to consume Skyflow api. (can be taken from credentials.json file download from Skyflow dashboard)
         /// </summary>
         /// <example>
         /// https://manage.skyflowapis-preview.com/v1/auth/sa/oauth/token
@@ -45,12 +45,12 @@ namespace VirtoCommerce.Skyflow.Core.Models
         /// Service account with limited permissions only for create and tokenization cards records. Used by PaymentForm.
         /// </summary>
         [Required]
-        public SkyFlowServiceAccountOptions PaymentFormAccount { get; set; }
+        public SkyflowServiceAccountOptions PaymentFormAccount { get; set; }
         /// <summary>
         /// Service account with limited permissions only for execute connections and read the redacted cards data from vault. Used by concrete payment methods.
         /// </summary>
         [Required]
-        public SkyFlowServiceAccountOptions IntegrationsAccount { get; set; }
+        public SkyflowServiceAccountOptions IntegrationsAccount { get; set; }
 
         /// <summary>
         /// Payment method type name that will be used for payment processing on behalf of skyflow
@@ -62,7 +62,7 @@ namespace VirtoCommerce.Skyflow.Core.Models
         public string TargetConnectionRoute { get; set; }
     }
 
-    public class SkyFlowServiceAccountOptions
+    public class SkyflowServiceAccountOptions
     {
         public string ClientId { get; set; }
         public string ClientName { get; set; }

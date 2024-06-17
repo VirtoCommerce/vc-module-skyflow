@@ -7,7 +7,7 @@ namespace VirtoCommerce.Skyflow.Core.Services
 {
     public interface ISkyflowClient
     {
-        Task<SkyflowBearerTokenResponse> GetBearerToken(SkyFlowServiceAccountOptions option);
+        Task<SkyflowBearerTokenResponse> GetBearerToken(SkyflowServiceAccountOptions option);
         Task<HttpResponseMessage> InvokeConnection(HttpMethod method, string route, Dictionary<string, string> headers, HttpContent content);
         Task<SkyflowCard> GetCard(string skyflowId);
         Task<IEnumerable<SkyflowCard>> GetAllSavedUserCards(string userId);

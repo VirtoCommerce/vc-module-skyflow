@@ -1,19 +1,19 @@
-# Integration with SkyFlow
-The module implements integration with [SkyFlow](https://www.skyflow.com/): Data Privacy Vault service.
+# Integration with Skyflow
+The module implements integration with [Skyflow](https://www.skyflow.com/): Data Privacy Vault service.
 
 ## Key Features:
 * **Unified Credit Card User Experience:** Elevate your users' payment journey with a unified experience for credit card transactions across diverse payment providers.
-* **PCI Compliance:** SkyFlow ensures PCI compliance, streamlining adherence to industry standards for secure handling of payment data.
+* **PCI Compliance:** Skyflow ensures PCI compliance, streamlining adherence to industry standards for secure handling of payment data.
 * **Integration with Virto Storefront:** Seamlessly integrated with [Virto Storefront](https://github.com/VirtoCommerce/vc-theme-b2b-vue) for a cohesive e-commerce experience.
 * **Production-Ready Integration with Authorize.NET:** Fully functional integration with Authorize.NET payment providers, ready for production use.
-* **Flexible Customization:** Utilize the power of Virto Commerce Native Extensibility Framework and SkyFlow to integrate with a wide range of payment providers, tailored to your specific needs.
+* **Flexible Customization:** Utilize the power of Virto Commerce Native Extensibility Framework and Skyflow to integrate with a wide range of payment providers, tailored to your specific needs.
 * **Optimized for Marketplaces:** Marketplaces can effortlessly connect with various Payment Service Providers preferred by individual suppliers, facilitating diverse payment options for customers.
 * **Saved Credit Card:** Customers have the option to securely save their credit card information for future transactions, enhancing convenience and speed of checkout.
 
 ## Prerequisites:
-1. **SkyFlow Account:** Ensure you have created and configured your [SkyFlow Account](https://www.skyflow.com/) to leverage the full capabilities of the module.
+1. **Skyflow Account:** Ensure you have created and configured your [Skyflow Account](https://www.skyflow.com/) to leverage the full capabilities of the module.
 2. **Authorize.NET Account:** Similarly, create and configure your [Authorize.NET Account](https://www.authorize.net/) for seamless integration with the module.
-3. **Installation:** Simply install the SkyFlow Module to start harnessing its powerful features and functionalities.
+3. **Installation:** Simply install the Skyflow Module to start harnessing its powerful features and functionalities.
 
 ## Architecture
 
@@ -30,7 +30,7 @@ The module implements integration with [SkyFlow](https://www.skyflow.com/): Data
   * Upon submission of the form, the payment process utilizes Skyflow for PCI-compliant Credit Card storage.
   * Skyflow tokenizes my Credit Card information securely.
 4. **Transaction Processing:**
-  * The tokenized Credit Card information is seamlessly integrated with Payment processing through SkyFlow.
+  * The tokenized Credit Card information is seamlessly integrated with Payment processing through Skyflow.
   * The transaction is created successfully via Authorize.NET.
 5. **Payment Document Creation:**
   * A Payment document is automatically created within Virto Commerce Payment Processing for the Credit Card transaction.
@@ -74,8 +74,8 @@ Vault -> Service Accounts -> Add Service Account
 Download the `credentials.json` files for each service account and keep them on the secure place.
 
 
-#### Creating Authorize.NET SkyFlow Connection
-1. In the SkyFlow studio open `Vault -> Connections -> Add connection`
+#### Creating Authorize.NET Skyflow Connection
+1. In the Skyflow studio open `Vault -> Connections -> Add connection`
 2. Use the   `https://apitest.authorize.net` as outbound base url
 3. Use the `POST /xml/v1/request.api` endpoint for route
 4. Select content type `XML`
@@ -95,7 +95,7 @@ Configuration example.
 ```json
 {
   "Payments": {
-    "SkyFlow": {
+    "Skyflow": {
       "tokenURI": "https://manage.skyflowapis-preview.com/v1/auth/sa/oauth/token",
       "vaultURI": "https://a370a9658141.vault.skyflowapis-preview.com",
       "gatewayURI": "https://a370a9658141.gateway.skyflowapis-preview.com",
@@ -119,12 +119,12 @@ Configuration example.
 }
 ```
 
-- `Payments:SkyFlow:tokenURI` - url uses for receiving auth token to consume SkyFlow api. (can be taken from credentials.json file downloaded from Skyflow dashboard)
-- `Payments:Skyflow:vaultURI` - vault url can be taken from SkyFlow studio click three dots on the vault and select `view details` actions
+- `Payments:Skyflow:tokenURI` - url uses for receiving auth token to consume Skyflow api. (can be taken from credentials.json file downloaded from Skyflow dashboard)
+- `Payments:Skyflow:vaultURI` - vault url can be taken from Skyflow studio click three dots on the vault and select `view details` actions
 - `Payments:Skyflow:gatewayURI` - URI for invoke outbound connection rules. Just need to replace `vault` to `gateway` in the `vaultURI`
-- `Payments.SkyFlow.tableName` - the table name for store credit cards data. Default value `credit_cards`
-- `Payments.SkyFlow.PaymentFormAccount` and `Payments.SkyFlow.IntegrationsAccount` - the two service account configuration sections with credentials taken from SkyFlow service account configuration on the previous steps.
-- `Payments.SkyFlow.TargetPaymentMethod` -  The payment method being used for authorizing payment by SkyFlow payment method. To execute the outbound Payment Service Provider API through SkyFlow connection, create an HttpClient instance  `IHttpServiceFactory.CreateClient("SkyFlow")` and execute the request to the Payment Service API with the tokenized card data. See code example:
+- `Payments.Skyflow.tableName` - the table name for store credit cards data. Default value `credit_cards`
+- `Payments.Skyflow.PaymentFormAccount` and `Payments.Skyflow.IntegrationsAccount` - the two service account configuration sections with credentials taken from Skyflow service account configuration on the previous steps.
+- `Payments.Skyflow.TargetPaymentMethod` -  The payment method being used for authorizing payment by Skyflow payment method. To execute the outbound Payment Service Provider API through Skyflow connection, create an HttpClient instance  `IHttpServiceFactory.CreateClient("Skyflow")` and execute the request to the Payment Service API with the tokenized card data. See code example:
 ```C#
  public override PostProcessPaymentRequestResult PostProcessPayment(PostProcessPaymentRequest request)
    {

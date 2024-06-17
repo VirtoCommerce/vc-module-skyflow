@@ -83,14 +83,14 @@ namespace VirtoCommerce.Skyflow.Data.Providers
             var skyFlowCard = await _skyFlowClient.GetCard(skyflowId);
             if (skyFlowCard == null)
             {
-                throw new OperationCanceledException($"SkyFlow card record not found");
+                throw new OperationCanceledException($"Skyflow card record not found");
             }
             if (!string.IsNullOrEmpty(skyFlowCard.UserId) && skyFlowCard.UserId != order.CustomerId)
             {
                 throw new UnauthorizedAccessException($"Payment cannot be processed using a card registered to another user");
             }
             request.Parameters["CreditCard"] = JsonConvert.SerializeObject(skyFlowCard);
-            request.Parameters["ProxyHttpClientName"] = "SkyFlow";
+            request.Parameters["ProxyHttpClientName"] = "Skyflow";
             request.Parameters["ProxyEndpointUrl"] = new Uri($"{_options.GatewayUri}/v1/gateway/outboundRoutes/{_options.TargetConnectionRoute}").ToString();
             var result = paymentMethod.PostProcessPayment(request);
             return result;
