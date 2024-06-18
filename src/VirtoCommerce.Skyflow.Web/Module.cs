@@ -40,7 +40,6 @@ public class Module : IModule, IHasConfiguration
 
     public void PostInitialize(IApplicationBuilder appBuilder)
     {
-        var serviceProvider = appBuilder.ApplicationServices;
         var paymentMethodsRegistrar = appBuilder.ApplicationServices.GetRequiredService<IPaymentMethodsRegistrar>();
         paymentMethodsRegistrar.RegisterPaymentMethod(() => appBuilder.ApplicationServices.GetService<SkyflowPaymentMethod>());
     }
