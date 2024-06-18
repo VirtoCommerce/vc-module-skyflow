@@ -63,7 +63,7 @@ public class SkyflowClient(
 
         var token = await GetBearerTokenInternal(_options.IntegrationsAccount);
         request.Headers.Add("X-Skyflow-Authorization", $"{token.AccessToken}");
-        request.Headers.Add("User-Agent", "Opus/1.0");
+        request.Headers.Add("User-Agent", "VirtoCommerce/1.0");
         foreach (var header in headers)
         {
             request.Headers.Add(header.Key, header.Value);
