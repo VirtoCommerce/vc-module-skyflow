@@ -25,11 +25,10 @@ public class SkyflowClient(
     private readonly SkyflowOptions _options = options.Value;
 
 
-    public Task<SkyflowBearerTokenResponse> GetBearerToken(SkyflowServiceAccountOptions serviceAccount)
+    public Task<SkyflowBearerTokenResponse> GetBearerToken(SkyflowServiceAccountOptions serviceAccountOptions)
     {
-        return GetBearerTokenInternal(serviceAccount);
+        return GetBearerTokenInternal(serviceAccountOptions);
     }
-
 
     public async Task<IEnumerable<SkyflowCard>> GetAllSavedUserCards(string userId)
     {
@@ -135,9 +134,9 @@ public class SkyflowClient(
         return response;
     }
 
-    private async Task<SkyflowBearerTokenResponse> GetBearerTokenInternal(SkyflowServiceAccountOptions serviceAccount)
+    private async Task<SkyflowBearerTokenResponse> GetBearerTokenInternal(SkyflowServiceAccountOptions serviceAccountOptions)
     {
-        var signedToken = GenerateToken(serviceAccount);
+        var signedToken = GenerateToken(serviceAccountOptions);
 
         var payload = new { grant_type = GrandType, assertion = signedToken };
         var body = JsonConvert.SerializeObject(payload);
@@ -158,23 +157,23 @@ public class SkyflowClient(
         return responseContent;
     }
 
-    private string GenerateToken(SkyflowServiceAccountOptions serviceAccount)
+    private string GenerateToken(SkyflowServiceAccountOptions serviceAccountOptions)
     {
-        var certificate = CreateCertificate(serviceAccount);
+        var certificate = CreateCertificate(serviceAccountOptions);
         var builder = JwtBuilder.Create()
             .WithAlgorithm(new RS256Algorithm(certificate))
-            .AddClaim("iss", serviceAccount.ClientId)
-            .AddClaim("key", serviceAccount.KeyId)
+            .AddClaim("iss", serviceAccountOptions.ClientId)
+            .AddClaim("key", serviceAccountOptions.KeyId)
             .AddClaim("aud", _options.TokenUri)
             .AddClaim("exp", DateTimeOffset.UtcNow.AddHours(1).ToUnixTimeSeconds())
-            .AddClaim("sub", serviceAccount.ClientId);
+            .AddClaim("sub", serviceAccountOptions.ClientId);
         var signedToken = builder.Encode();
         return signedToken;
     }
 
-    private static X509Certificate2 CreateCertificate(SkyflowServiceAccountOptions serviceAccount)
+    private static X509Certificate2 CreateCertificate(SkyflowServiceAccountOptions serviceAccountOptions)
     {
-        var privateKey = GetPrivateKey(serviceAccount);
+        var privateKey = GetPrivateKey(serviceAccountOptions);
 
         var bytes = Convert.FromBase64String(privateKey);
 
@@ -187,19 +186,19 @@ public class SkyflowClient(
         return certificate;
     }
 
-    private static string GetPrivateKey(SkyflowServiceAccountOptions serviceAccount)
+    private static string GetPrivateKey(SkyflowServiceAccountOptions serviceAccountOptions)
     {
         const string beginKey = "-----BEGIN PRIVATE KEY-----";
         const string endKey = "-----END PRIVATE KEY-----";
-        var startIndex = serviceAccount.PrivateKey.IndexOf(beginKey, StringComparison.InvariantCulture) + beginKey.Length;
-        var endIndex = serviceAccount.PrivateKey.LastIndexOf(endKey, StringComparison.InvariantCulture);
+        var startIndex = serviceAccountOptions.PrivateKey.IndexOf(beginKey, StringComparison.InvariantCulture) + beginKey.Length;
+        var endIndex = serviceAccountOptions.PrivateKey.LastIndexOf(endKey, StringComparison.InvariantCulture);
 
         if (startIndex < beginKey.Length || endIndex < beginKey.Length)
         {
             throw new InvalidOperationException("Wrong PrivateKey setting");
         }
 
-        var result = serviceAccount.PrivateKey[startIndex..endIndex]
+        var result = serviceAccountOptions.PrivateKey[startIndex..endIndex]
             .Replace("\n", "").Replace("\\n", "").Replace(" ", "");
         return result;
     }
