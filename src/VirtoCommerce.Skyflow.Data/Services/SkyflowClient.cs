@@ -76,7 +76,7 @@ public class SkyflowClient(
     public async Task<SkyflowCard> GetCard(string skyflowId)
     {
         // required the Vault Owner permission
-        //https://ebfc9bee4242.vault.skyflowapis.com/v1/vaults/c1aeec61ad7c46c2b724f004a7658b2f/credit_cards/5fa1d8e1-9b9d-4eb7-905d-31df6e93cf7e?tokenization=true
+        // https://ebfc9bee4242.vault.skyflowapis.com/v1/vaults/c1aeec61ad7c46c2b724f004a7658b2f/credit_cards/5fa1d8e1-9b9d-4eb7-905d-31df6e93cf7e?tokenization=true
         // get tokenized data
         var tokenUrl = $"{_options.VaultUri}/v1/vaults/{_options.VaultId}/{_options.TableName}/{skyflowId}?tokenization=true";
         var tokenResult = await GetSkyflowResponse<SkyflowTableRowModel>(HttpMethod.Get, tokenUrl);
@@ -91,20 +91,13 @@ public class SkyflowClient(
             CardholderName = tokenResult.Fields["cardholder_name"],
             UserId = tokenResult.Fields["user_id"]
         };
-        //TODO: Remove later when Skyflow team guided us how to send numeric detokenized values 
-        //get detokenized  expiration data and redacted card number to get last 4 digits
-        tokenUrl = $"{_options.VaultUri}/v1/vaults/{_options.VaultId}/{_options.TableName}/{skyflowId}?tokenization=false&fields=card_expiration&fields=card_number";
-        //Skyflow returns redacted values for card numbers, such as XXXXXXXXXXXX4444, no sensitive data is received.
-        tokenResult = await GetSkyflowResponse<SkyflowTableRowModel>(HttpMethod.Get, tokenUrl);
-        result.CardExpiration = tokenResult.Fields["card_expiration"];
-        //result.Last4Digits = tokenResult.Fields["card_number"][Math.Max(0, tokenResult.Fields["card_number"].Length - 4)..];
         return result;
     }
 
     public async Task<SkyflowCard[]> GetCardsByIds(string[] skyflowIds)
     {
         // required the Vault Owner permission
-        //https://ebfc9bee4242.vault.skyflowapis.com/v1/vaults/c1aeec61ad7c46c2b724f004a7658b2f/credit_cards/5fa1d8e1-9b9d-4eb7-905d-31df6e93cf7e?tokenization=true
+        // https://ebfc9bee4242.vault.skyflowapis.com/v1/vaults/c1aeec61ad7c46c2b724f004a7658b2f/credit_cards/5fa1d8e1-9b9d-4eb7-905d-31df6e93cf7e?tokenization=true
         // get tokenized data
         var tokenUrl = $"{_options.VaultUri}/v1/vaults/{_options.VaultId}/{_options.TableName}?" + string.Join("&", skyflowIds.Select(x => $"skyflow_ids={x}"));
         var response = await GetSkyflowResponse<SkyflowResponseModel>(HttpMethod.Get, tokenUrl);

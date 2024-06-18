@@ -68,6 +68,7 @@ namespace VirtoCommerce.Skyflow.Data.Providers
             }
             return paymentMethod;
         }
+
         private async Task<PostProcessPaymentRequestResult> PostProcessPaymentAsync(PostProcessPaymentRequest request)
         {
             var paymentMethod = await GetTargetPaymentMethod(request);
@@ -89,8 +90,11 @@ namespace VirtoCommerce.Skyflow.Data.Providers
             {
                 throw new UnauthorizedAccessException($"Payment cannot be processed using a card registered to another user");
             }
+
+            var token = await _skyFlowClient.GetBearerToken(_options.PaymentFormAccount);
             request.Parameters["CreditCard"] = JsonConvert.SerializeObject(skyFlowCard);
             request.Parameters["ProxyHttpClientName"] = "Skyflow";
+            request.Parameters["BearerToken"] = token.AccessToken;
             request.Parameters["ProxyEndpointUrl"] = new Uri($"{_options.GatewayUri}/v1/gateway/outboundRoutes/{_options.TargetConnectionRoute}").ToString();
             var result = paymentMethod.PostProcessPayment(request);
             return result;
