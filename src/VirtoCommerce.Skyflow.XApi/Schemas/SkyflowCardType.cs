@@ -1,4 +1,4 @@
-using VirtoCommerce.ExperienceApiModule.Core.Schemas;
+using VirtoCommerce.Xapi.Core.Schemas;
 using VirtoCommerce.Skyflow.Core.Models;
 
 namespace VirtoCommerce.Skyflow.XApi.Schemas;
