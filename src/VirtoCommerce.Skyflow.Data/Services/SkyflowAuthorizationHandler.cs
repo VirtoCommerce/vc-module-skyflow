@@ -11,19 +11,31 @@ namespace VirtoCommerce.Skyflow.Data.Services
     {
         private readonly ISkyflowClient _skyflowClient;
         private readonly SkyflowOptions _options;
+
         public SkyflowAuthorizationHandler(ISkyflowClient skyflowClient, IOptions<SkyflowOptions> options)
         {
             _options = options.Value;
             _skyflowClient = skyflowClient;
         }
+
+        protected override HttpResponseMessage Send(HttpRequestMessage request, CancellationToken cancellationToken)
+        {
+            SetHeadersAsync(request).GetAwaiter().GetResult();
+            return base.Send(request, cancellationToken);
+        }
+
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
-            var token = await _skyflowClient.GetBearerToken(_options.IntegrationsAccount);
-            // Add the Authorization header to the request
-            request.Headers.Add("X-Skyflow-Authorization", $"{token.AccessToken}");
-            request.Headers.Add("User-Agent", "Opus/1.0");
-            // Call the inner handler
+            await SetHeadersAsync(request);
             return await base.SendAsync(request, cancellationToken);
+        }
+
+        private async Task SetHeadersAsync(HttpRequestMessage request)
+        {
+            var token = await _skyflowClient.GetBearerToken(_options.IntegrationsAccount);
+            request.Headers.Add("Authorization", $"Bearer {token.AccessToken}");
+            request.Headers.Add("X-Skyflow-Authorization", token.AccessToken);
+            request.Headers.Add("User-Agent", "VirtoCommerce/1.0");
         }
     }
 }

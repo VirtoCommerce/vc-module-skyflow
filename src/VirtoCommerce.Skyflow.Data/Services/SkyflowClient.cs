@@ -12,6 +12,7 @@ using JWT.Builder;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using VirtoCommerce.Platform.Core.Common;
+using VirtoCommerce.Skyflow.Core;
 using VirtoCommerce.Skyflow.Core.Models;
 using VirtoCommerce.Skyflow.Core.Services;
 
@@ -23,7 +24,6 @@ public class SkyflowClient(
 {
     private const string GrandType = "urn:ietf:params:oauth:grant-type:jwt-bearer";
     private readonly SkyflowOptions _options = options.Value;
-
 
     public Task<SkyflowBearerTokenResponse> GetBearerToken(SkyflowServiceAccountOptions serviceAccountOptions)
     {
@@ -60,10 +60,6 @@ public class SkyflowClient(
         {
             Content = content
         };
-
-        var token = await GetBearerTokenInternal(_options.IntegrationsAccount);
-        request.Headers.Add("X-Skyflow-Authorization", $"{token.AccessToken}");
-        request.Headers.Add("User-Agent", "VirtoCommerce/1.0");
         foreach (var header in headers)
         {
             request.Headers.Add(header.Key, header.Value);
@@ -105,13 +101,11 @@ public class SkyflowClient(
 
     private async Task<T> GetSkyflowResponse<T>(HttpMethod method, string url, string body = null)
     {
-        var token = await GetBearerTokenInternal(_options.IntegrationsAccount);
         var request = new HttpRequestMessage(method, url);
         if (!body.IsNullOrEmpty())
         {
             request.Content = new StringContent(body, Encoding.UTF8, "application/json");
         }
-        request.Headers.Add("Authorization", $"Bearer {token.AccessToken}");
         var response = await Send(request);
 
         if (!response.IsSuccessStatusCode)
@@ -129,7 +123,7 @@ public class SkyflowClient(
 
     private async Task<HttpResponseMessage> Send(HttpRequestMessage message)
     {
-        using var httpClient = httpClientFactory.CreateClient();
+        var httpClient = httpClientFactory.CreateClient(ModuleConstants.SkyflowHttpClientName);
         var response = await httpClient.SendAsync(message);
         return response;
     }
@@ -147,7 +141,8 @@ public class SkyflowClient(
             Content = content
         };
 
-        var response = await Send(request);
+        using var httpClient = httpClientFactory.CreateClient();
+        var response = await httpClient.SendAsync(request);
         var responseContent = await response.Content.ReadFromJsonAsync<SkyflowBearerTokenResponse>();
 
         if (responseContent == null || string.IsNullOrEmpty(responseContent.AccessToken))

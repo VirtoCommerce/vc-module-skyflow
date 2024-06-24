@@ -7,6 +7,7 @@ using VirtoCommerce.ExperienceApiModule.Core.Extensions;
 using VirtoCommerce.ExperienceApiModule.Core.Infrastructure;
 using VirtoCommerce.PaymentModule.Core.Services;
 using VirtoCommerce.Platform.Core.Modularity;
+using VirtoCommerce.Skyflow.Core;
 using VirtoCommerce.Skyflow.Core.Models;
 using VirtoCommerce.Skyflow.Core.Services;
 using VirtoCommerce.Skyflow.Data.Providers;
@@ -33,7 +34,7 @@ public class Module : IModule, IHasConfiguration
         serviceCollection.AddTransient<ISkyflowClient, SkyflowClient>();
         serviceCollection.AddTransient<SkyflowPaymentMethod>();
         serviceCollection.AddTransient<SkyflowAuthorizationHandler>();
-        serviceCollection.AddHttpClient("Skyflow")
+        serviceCollection.AddHttpClient(ModuleConstants.SkyflowHttpClientName)
           .AddHttpMessageHandler<SkyflowAuthorizationHandler>();
 
     }

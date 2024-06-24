@@ -10,6 +10,7 @@ using VirtoCommerce.PaymentModule.Core.Model;
 using VirtoCommerce.PaymentModule.Core.Services;
 using VirtoCommerce.PaymentModule.Model.Requests;
 using VirtoCommerce.Platform.Core.Common;
+using VirtoCommerce.Skyflow.Core;
 using VirtoCommerce.Skyflow.Core.Models;
 using VirtoCommerce.Skyflow.Core.Services;
 
@@ -84,17 +85,15 @@ namespace VirtoCommerce.Skyflow.Data.Providers
             var skyFlowCard = await _skyFlowClient.GetCard(skyflowId);
             if (skyFlowCard == null)
             {
-                throw new OperationCanceledException($"Skyflow card record not found");
+                throw new OperationCanceledException("Skyflow card record not found");
             }
             if (!string.IsNullOrEmpty(skyFlowCard.UserId) && skyFlowCard.UserId != order.CustomerId)
             {
-                throw new UnauthorizedAccessException($"Payment cannot be processed using a card registered to another user");
+                throw new UnauthorizedAccessException("Payment cannot be processed using a card registered to another user");
             }
 
-            var token = await _skyFlowClient.GetBearerToken(_options.PaymentFormAccount);
             request.Parameters["CreditCard"] = JsonConvert.SerializeObject(skyFlowCard);
-            request.Parameters["ProxyHttpClientName"] = "Skyflow";
-            request.Parameters["BearerToken"] = token.AccessToken;
+            request.Parameters["ProxyHttpClientName"] = ModuleConstants.SkyflowHttpClientName;
             request.Parameters["ProxyEndpointUrl"] = new Uri($"{_options.GatewayUri}/v1/gateway/outboundRoutes/{_options.TargetConnectionRoute}").ToString();
             var result = paymentMethod.PostProcessPayment(request);
             return result;
