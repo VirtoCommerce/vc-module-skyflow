@@ -7,10 +7,11 @@ namespace VirtoCommerce.Skyflow.Core.Services
 {
     public interface ISkyflowClient
     {
-        Task<SkyflowBearerTokenResponse> GetBearerToken();
-        Task<HttpResponseMessage> InvokeConnection(string connectionName, HttpRequestMessage request);
-        Task<IEnumerable<SkyflowCard>> GetCards(SkyflowStoreConfig config, string userId);
-        Task<IDictionary<string, string>> GetCardTokens(SkyflowStoreConfig config, string skyflowId);
-        Task<bool> DeleteCard(SkyflowStoreConfig config, string skyflowId);
+        Task<SkyflowBearerTokenResponse> GetBearerToken(SkyflowServiceAccountOptions serviceAccountOptions);
+        Task<HttpResponseMessage> InvokeConnection(HttpMethod method, string route, Dictionary<string, string> headers, HttpContent content);
+        Task<SkyflowCard> GetCard(string skyflowId);
+        Task<IEnumerable<SkyflowCard>> GetAllSavedUserCards(string userId);
+        Task<SkyflowCard[]> GetCardsByIds(string[] skyflowIds);
+        Task<bool> DeleteCard(string skyflowId);
     }
 }
