@@ -112,7 +112,7 @@ Configuration example.
         "privateKey": "-----BEGIN PRIVATE KEY-----Base64-----END PRIVATE KEY-----"
       },
       "TargetPaymentMethod": "AuthorizeNetPaymentMethod",
-      "TargetConnectionRoute": "b47bea9c61c74cf4aac3b26d09aaf825/xml"
+      "TargetConnectionRoute": "b47bea9c61c74cf4aac3b26d09aaf825/xml/v1/request.api"
 
     }
   }
