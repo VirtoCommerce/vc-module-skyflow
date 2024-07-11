@@ -9,7 +9,7 @@ public class SkyflowCardTest
 {
     [Theory]
     [InlineData("10", "20", false)]
-    [InlineData("01", "28", true)]
+    [InlineData("01", "38", true)]
     [InlineData("02", "98", true)]
     public void MonthYearTest(string month, string year, bool isActive)
     {
@@ -20,7 +20,7 @@ public class SkyflowCardTest
 
     [Theory]
     [InlineData("10/20", false)]
-    [InlineData("01/2028", true)]
+    [InlineData("01/2038", true)]
     [InlineData("02/98", true)]
     public void ExpireDateTest(string expireDate, bool isActive)
     {
