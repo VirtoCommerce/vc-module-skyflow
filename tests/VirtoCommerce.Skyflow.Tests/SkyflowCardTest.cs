@@ -8,25 +8,25 @@ namespace VirtoCommerce.Skyflow.Tests;
 public class SkyflowCardTest
 {
     [Theory]
-    [InlineData("10", "20", true)]
-    [InlineData("01", "28", false)]
-    [InlineData("02", "98", false)]
-    public void MonthYearTest(string month, string year, bool inactive)
+    [InlineData("10", "20", false)]
+    [InlineData("01", "28", true)]
+    [InlineData("02", "98", true)]
+    public void MonthYearTest(string month, string year, bool isActive)
     {
         var card = new SkyflowCard { ExpiryMonth = month, ExpiryYear = year, };
 
-        Assert.Equal(inactive, card.Inactive);
+        Assert.Equal(isActive, card.Active);
     }
 
     [Theory]
-    [InlineData("10/20", true)]
-    [InlineData("01/2028", false)]
-    [InlineData("02/98", false)]
-    public void ExpireDateTest(string expireDate, bool inactive)
+    [InlineData("10/20", false)]
+    [InlineData("01/2028", true)]
+    [InlineData("02/98", true)]
+    public void ExpireDateTest(string expireDate, bool isActive)
     {
         var card = new SkyflowCard { CardExpiration = expireDate };
 
-        Assert.Equal(inactive, card.Inactive);
+        Assert.Equal(isActive, card.Active);
     }
 
     [Fact]
@@ -36,7 +36,7 @@ public class SkyflowCardTest
         var year = DateTime.UtcNow.Year.ToString("00");
         var card = new SkyflowCard { ExpiryMonth = month, ExpiryYear = year, };
 
-        Assert.False(card.Inactive);
+        Assert.True(card.Active);
     }
 
 

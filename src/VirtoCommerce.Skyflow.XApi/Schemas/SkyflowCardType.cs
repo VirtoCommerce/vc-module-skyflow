@@ -15,6 +15,6 @@ public class SkyflowCardType : ExtendableGraphType<SkyflowCard>
         Field(x => x.ExpiryYear, nullable: true);
         Field(x => x.SkyflowId);
         Field(x => x.UserId);
-        Field(x => x.Inactive);
+        Field(x => x.Active);
     }
 }

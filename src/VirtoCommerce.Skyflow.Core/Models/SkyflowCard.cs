@@ -30,16 +30,16 @@ namespace VirtoCommerce.Skyflow.Core.Models
         [JsonPropertyName("user_id")]
         public string UserId { get; set; }
 
-        [JsonPropertyName("inactive")]
-        public bool Inactive
+        [JsonPropertyName("active")]
+        public bool Active
         {
             get
             {
-                return CheckInactive();
+                return CheckIsActive();
             }
         }
 
-        private bool CheckInactive()
+        private bool CheckIsActive()
         {
             var month = 0;
             var year = 0;
@@ -73,10 +73,10 @@ namespace VirtoCommerce.Skyflow.Core.Models
                 }
 
                 var now = System.DateTime.UtcNow;
-                return year < now.Year || (year == now.Year && month < now.Month);
+                return year >= now.Year && (year > now.Year || month >= now.Month);
             }
 
-            return false;
+            return true;
         }
     }
 
