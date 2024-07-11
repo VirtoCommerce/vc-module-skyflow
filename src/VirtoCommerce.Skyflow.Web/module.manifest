@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <module>
   <id>VirtoCommerce.Skyflow</id>
-  <version>3.804.0</version>
+  <version>3.805.0</version>
   <version-tag></version-tag>
 
   <platformVersion>3.841.0</platformVersion>
@@ -11,7 +11,7 @@
   </dependencies>
 
   <title>Skyflow</title>
-  <description>SkyFlow Integration as payment provider enables a unified user experience for Credit Card transactions across diverse payment providers.</description>
+  <description>Skyflow Integration as payment provider enables a unified user experience for Credit Card transactions across diverse payment providers.</description>
 
   <authors>
     <author>Vasily Kotov</author>
