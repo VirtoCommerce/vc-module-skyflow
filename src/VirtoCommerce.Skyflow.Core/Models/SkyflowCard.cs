@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
+using VirtoCommerce.Platform.Core.Common;
 
 namespace VirtoCommerce.Skyflow.Core.Models
 {
@@ -28,6 +29,55 @@ namespace VirtoCommerce.Skyflow.Core.Models
 
         [JsonPropertyName("user_id")]
         public string UserId { get; set; }
+
+        [JsonPropertyName("inactive")]
+        public bool Inactive
+        {
+            get
+            {
+                return CheckInactive();
+            }
+        }
+
+        private bool CheckInactive()
+        {
+            var month = 0;
+            var year = 0;
+            if (!CardExpiration.IsNullOrEmpty())
+            {
+                // format MM/YY
+                var parts = CardExpiration.Split('/');
+                if (parts.Length == 2)
+                {
+                    month = int.Parse(parts[0]);
+                    year = int.Parse(parts[1]);
+                }
+            }
+
+            if (!ExpiryMonth.IsNullOrEmpty())
+            {
+                month = int.Parse(ExpiryMonth);
+            }
+            if (!ExpiryYear.IsNullOrEmpty())
+            {
+                year = int.Parse(ExpiryYear);
+            }
+
+            if (year != 0 && month != 0)
+            {
+                // 08/20
+
+                if (year < 100)
+                {
+                    year += 2000;
+                }
+
+                var now = System.DateTime.UtcNow;
+                return year < now.Year || (year == now.Year && month < now.Month);
+            }
+
+            return false;
+        }
     }
 
     public class SkyflowItemModel
