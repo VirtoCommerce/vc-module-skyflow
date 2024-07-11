@@ -73,7 +73,7 @@ namespace VirtoCommerce.Skyflow.Core.Models
                 }
 
                 var now = System.DateTime.UtcNow;
-                return year >= now.Year && (year > now.Year || month >= now.Month);
+                return year > now.Year || (year == now.Year && month >= now.Month);
             }
 
             return true;
