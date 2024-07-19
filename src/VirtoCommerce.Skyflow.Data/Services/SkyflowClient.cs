@@ -68,12 +68,13 @@ public class SkyflowClient(
         return response;
     }
 
-    public async Task<SkyflowCard> GetCard(string skyflowId)
+    public async Task<SkyflowCard> GetCard(string skyflowId, object callParams = null)
     {
         // required the Vault Owner permission
         // https://ebfc9bee4242.vault.skyflowapis.com/v1/vaults/c1aeec61ad7c46c2b724f004a7658b2f/credit_cards/5fa1d8e1-9b9d-4eb7-905d-31df6e93cf7e?tokenization=true
         // get tokenized data
-        var tokenUrl = $"{_options.VaultUri}/v1/vaults/{_options.VaultId}/{_options.TableName}/{skyflowId}?tokenization=true";
+        var queryString = callParams != null ? GetQueryString(callParams) : "tokenization=true";
+        var tokenUrl = $"{_options.VaultUri}/v1/vaults/{_options.VaultId}/{_options.TableName}/{skyflowId}?{queryString}";
         var tokenResult = await GetSkyflowResponse<SkyflowTableRowModel>(HttpMethod.Get, tokenUrl);
         tokenResult.Fields = tokenResult.Fields.WithDefaultValue(null);
 
@@ -89,12 +90,13 @@ public class SkyflowClient(
         return result;
     }
 
-    public async Task<SkyflowCard[]> GetCardsByIds(string[] skyflowIds)
+    public async Task<SkyflowCard[]> GetCardsByIds(string[] skyflowIds, object callParams = null)
     {
+        var queryString = callParams != null ? $"&{GetQueryString(callParams)}" : null;
         // required the Vault Owner permission
         // https://ebfc9bee4242.vault.skyflowapis.com/v1/vaults/c1aeec61ad7c46c2b724f004a7658b2f/credit_cards/5fa1d8e1-9b9d-4eb7-905d-31df6e93cf7e?tokenization=true
         // get tokenized data
-        var tokenUrl = $"{_options.VaultUri}/v1/vaults/{_options.VaultId}/{_options.TableName}?" + string.Join("&", skyflowIds.Select(x => $"skyflow_ids={x}"));
+        var tokenUrl = $"{_options.VaultUri}/v1/vaults/{_options.VaultId}/{_options.TableName}?" + string.Join("&", skyflowIds.Select(x => $"skyflow_ids={x}" + queryString));
         var response = await GetSkyflowResponse<SkyflowResponseModel>(HttpMethod.Get, tokenUrl);
         return response?.Records.Select(x => x.Fields).ToArray();
     }
@@ -151,7 +153,18 @@ public class SkyflowClient(
         }
         return responseContent;
     }
-
+    private string GetQueryString(object callParams)
+    {
+        var result = string.Empty;
+        if (callParams != null)
+        {
+            var type = callParams.GetType();
+            var props = type.GetProperties();
+            var pairs = props.Select(x => x.Name + "=" + x.GetValue(callParams, null)).ToArray();
+            result = string.Join("&", pairs);
+        }
+        return result;
+    }
     private string GenerateToken(SkyflowServiceAccountOptions serviceAccountOptions)
     {
         var certificate = CreateCertificate(serviceAccountOptions);
