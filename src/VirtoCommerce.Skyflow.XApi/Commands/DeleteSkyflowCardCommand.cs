@@ -6,6 +6,7 @@ namespace VirtoCommerce.Skyflow.XApi.Commands;
 public class DeleteSkyflowCardCommand : ICommand<bool>
 {
     public required string SkyflowId { get; set; }
+    public required string UserId { get; set; }
     public required string StoreId { get; set; }
 }
 
