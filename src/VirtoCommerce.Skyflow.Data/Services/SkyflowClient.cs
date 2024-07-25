@@ -160,7 +160,7 @@ public class SkyflowClient(
         {
             var type = callParams.GetType();
             var props = type.GetProperties();
-            var pairs = props.Select(x => x.Name + "=" + x.GetValue(callParams, null)).ToArray();
+            var pairs = props.Select(x => x.Name + "=" + Uri.EscapeDataString(x.GetValue(callParams, null)?.ToString() ?? string.Empty)).ToArray();
             result = string.Join("&", pairs);
         }
         return result;

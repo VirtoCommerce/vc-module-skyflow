@@ -2,7 +2,6 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using VirtoCommerce.ExperienceApiModule.Core.BaseQueries;
 using VirtoCommerce.Skyflow.XApi.Schemas;
-using GraphQL;
 
 namespace VirtoCommerce.Skyflow.XApi.Queries;
 
