@@ -12,5 +12,5 @@ public class SkyflowCardQueryBuilder : QueryBuilder<SkyflowCardQuery, SkyflowCar
     public SkyflowCardQueryBuilder(IMediator mediator, IAuthorizationService authorizationService)
         : base(mediator, authorizationService)
     {
-    }    
+    }
 }
