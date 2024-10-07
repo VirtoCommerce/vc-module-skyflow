@@ -33,6 +33,7 @@ namespace VirtoCommerce.Skyflow.Data.Services
         private async Task SetHeadersAsync(HttpRequestMessage request)
         {
             var token = await _skyflowClient.GetBearerToken(_options.IntegrationsAccount);
+            request.Headers.Add("Authorization", $"Bearer {token.AccessToken}");
             request.Headers.Add("X-Skyflow-Authorization", token.AccessToken);
             request.Headers.Add("User-Agent", "VirtoCommerce/1.0");
         }

@@ -64,7 +64,7 @@ public class SkyflowClient(
         {
             request.Headers.Add(header.Key, header.Value);
         }
-        var response = await Send(request);
+        var response = await Send(request, "X-Skyflow-Authorization");
         return response;
     }
 
@@ -123,9 +123,14 @@ public class SkyflowClient(
         return result;
     }
 
-    private async Task<HttpResponseMessage> Send(HttpRequestMessage message)
+    private async Task<HttpResponseMessage> Send(HttpRequestMessage message, string authHeader = "Authorization")
     {
-        var httpClient = httpClientFactory.CreateClient(ModuleConstants.SkyflowHttpClientName);
+        var httpClient = httpClientFactory.CreateClient();
+
+        var token = await GetBearerToken(_options.IntegrationsAccount);
+        message.Headers.Add(authHeader, token.AccessToken);
+        message.Headers.Add("User-Agent", "VirtoCommerce/1.0");
+
         var response = await httpClient.SendAsync(message);
         return response;
     }
