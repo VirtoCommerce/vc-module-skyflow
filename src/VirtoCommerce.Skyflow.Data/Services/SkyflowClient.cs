@@ -64,16 +64,17 @@ public class SkyflowClient(
         {
             request.Headers.Add(header.Key, header.Value);
         }
-        var response = await Send(request);
+        var response = await Send(request, useConnectionAuthHeader: true);
         return response;
     }
 
-    public async Task<SkyflowCard> GetCard(string skyflowId)
+    public async Task<SkyflowCard> GetCard(string skyflowId, object callParams = null)
     {
         // required the Vault Owner permission
         // https://ebfc9bee4242.vault.skyflowapis.com/v1/vaults/c1aeec61ad7c46c2b724f004a7658b2f/credit_cards/5fa1d8e1-9b9d-4eb7-905d-31df6e93cf7e?tokenization=true
         // get tokenized data
-        var tokenUrl = $"{_options.VaultUri}/v1/vaults/{_options.VaultId}/{_options.TableName}/{skyflowId}?tokenization=true";
+        var queryString = callParams != null ? GetQueryString(callParams) : "tokenization=true";
+        var tokenUrl = $"{_options.VaultUri}/v1/vaults/{_options.VaultId}/{_options.TableName}/{skyflowId}?{queryString}";
         var tokenResult = await GetSkyflowResponse<SkyflowTableRowModel>(HttpMethod.Get, tokenUrl);
         tokenResult.Fields = tokenResult.Fields.WithDefaultValue(null);
 
@@ -89,12 +90,13 @@ public class SkyflowClient(
         return result;
     }
 
-    public async Task<SkyflowCard[]> GetCardsByIds(string[] skyflowIds)
+    public async Task<SkyflowCard[]> GetCardsByIds(string[] skyflowIds, object callParams = null)
     {
+        var queryString = callParams != null ? $"&{GetQueryString(callParams)}" : null;
         // required the Vault Owner permission
         // https://ebfc9bee4242.vault.skyflowapis.com/v1/vaults/c1aeec61ad7c46c2b724f004a7658b2f/credit_cards/5fa1d8e1-9b9d-4eb7-905d-31df6e93cf7e?tokenization=true
         // get tokenized data
-        var tokenUrl = $"{_options.VaultUri}/v1/vaults/{_options.VaultId}/{_options.TableName}?" + string.Join("&", skyflowIds.Select(x => $"skyflow_ids={x}"));
+        var tokenUrl = $"{_options.VaultUri}/v1/vaults/{_options.VaultId}/{_options.TableName}?" + string.Join("&", skyflowIds.Select(x => $"skyflow_ids={x}" + queryString));
         var response = await GetSkyflowResponse<SkyflowResponseModel>(HttpMethod.Get, tokenUrl);
         return response?.Records.Select(x => x.Fields).ToArray();
     }
@@ -121,9 +123,21 @@ public class SkyflowClient(
         return result;
     }
 
-    private async Task<HttpResponseMessage> Send(HttpRequestMessage message)
+    private async Task<HttpResponseMessage> Send(HttpRequestMessage message, bool useConnectionAuthHeader = false)
     {
-        var httpClient = httpClientFactory.CreateClient(ModuleConstants.SkyflowHttpClientName);
+        var httpClient = httpClientFactory.CreateClient();
+
+        var token = await GetBearerToken(_options.IntegrationsAccount);
+        if (useConnectionAuthHeader)
+        {
+            message.Headers.Add("X-Skyflow-Authorization", token.AccessToken);
+        }
+        else
+        {
+            message.Headers.Add("Authorization", $"Bearer {token.AccessToken}");
+        }
+        message.Headers.Add("User-Agent", "VirtoCommerce/3.0");
+
         var response = await httpClient.SendAsync(message);
         return response;
     }
@@ -151,7 +165,18 @@ public class SkyflowClient(
         }
         return responseContent;
     }
-
+    private string GetQueryString(object callParams)
+    {
+        var result = string.Empty;
+        if (callParams != null)
+        {
+            var type = callParams.GetType();
+            var props = type.GetProperties();
+            var pairs = props.Select(x => x.Name + "=" + Uri.EscapeDataString(x.GetValue(callParams, null)?.ToString() ?? string.Empty)).ToArray();
+            result = string.Join("&", pairs);
+        }
+        return result;
+    }
     private string GenerateToken(SkyflowServiceAccountOptions serviceAccountOptions)
     {
         var certificate = CreateCertificate(serviceAccountOptions);
