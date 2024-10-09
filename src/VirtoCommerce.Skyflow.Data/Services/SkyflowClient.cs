@@ -136,7 +136,7 @@ public class SkyflowClient(
         {
             message.Headers.Add("Authorization", $"Bearer {token.AccessToken}");
         }
-        message.Headers.Add("User-Agent", "VirtoCommerce/1.0");
+        message.Headers.Add("User-Agent", "VirtoCommerce/3.0");
 
         var response = await httpClient.SendAsync(message);
         return response;
