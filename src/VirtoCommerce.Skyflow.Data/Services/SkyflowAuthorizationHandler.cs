@@ -35,7 +35,7 @@ namespace VirtoCommerce.Skyflow.Data.Services
             var token = await _skyflowClient.GetBearerToken(_options.IntegrationsAccount);
             request.Headers.Add("Authorization", $"Bearer {token.AccessToken}");
             request.Headers.Add("X-Skyflow-Authorization", token.AccessToken);
-            request.Headers.Add("User-Agent", "VirtoCommerce/1.0");
+            request.Headers.Add("User-Agent", "VirtoCommerce/3.0");
         }
     }
 }
