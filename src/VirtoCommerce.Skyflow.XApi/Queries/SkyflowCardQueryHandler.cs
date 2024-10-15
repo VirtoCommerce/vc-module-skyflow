@@ -1,8 +1,6 @@
-using Microsoft.IdentityModel.Tokens;
-using VirtoCommerce.Xapi.Core.Infrastructure;
-using VirtoCommerce.PaymentModule.Core.Services;
-using VirtoCommerce.Platform.Core.Settings;
+using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Skyflow.Core.Services;
+using VirtoCommerce.Xapi.Core.Infrastructure;
 
 namespace VirtoCommerce.Skyflow.XApi.Queries;
 
