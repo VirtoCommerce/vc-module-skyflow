@@ -1,0 +1,26 @@
+{
+  "payment": {
+    "labels": {
+      "SkyflowPaymentMethod": {
+        "name": "Skyflow",
+        "description": "Интеграция с Skyflow"
+      }
+    }
+  },
+  "settings": {
+    "VirtoCommerce.Payment.Skyflow": {
+      "VaultId": {
+        "title": "VaultId",
+        "description": "Идентификатор хранилища Skyflow. Его можно найти в настройках Skyflow Studio"
+      },
+      "VaultUrl": {
+        "title": "VaultUrl",
+        "description": "URL хранилища Skyflow. Его можно найти в настройках Skyflow Studio"
+      },
+      "TableName": {
+        "title": "TableName",
+        "description": "Название таблицы, где хранятся данные карт"
+      }
+    }
+  }
+}
