@@ -3,7 +3,7 @@
     "labels": {
       "SkyflowPaymentMethod": {
         "name": "Skyflow",
-        "description": "Skyflow integration"
+        "description": "Skyflow 集成"
       }
     }
   },
@@ -11,15 +11,15 @@
     "VirtoCommerce.Payment.Skyflow": {
       "VaultId": {
         "title": "VaultId",
-        "description": "Skyflow vault Id. You can get it in the Skyflow Studio settings"
+        "description": "Skyflow Vault ID。可以在 Skyflow Studio 设置中获取"
       },
       "VaultUrl": {
         "title": "VaultUrl",
-        "description": "Skyflow vault URL. You can get it in the Skyflow Studio settings"
+        "description": "Skyflow Vault URL。可以在 Skyflow Studio 设置中获取"
       },
       "TableName": {
         "title": "TableName",
-        "description": "Name of the table where you store card data"
+        "description": "存储卡数据的表名称"
       }
     }
   }
