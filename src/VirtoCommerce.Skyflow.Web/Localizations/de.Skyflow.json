@@ -3,7 +3,7 @@
     "labels": {
       "SkyflowPaymentMethod": {
         "name": "Skyflow",
-        "description": "Skyflow integration"
+        "description": "Skyflow-Integration"
       }
     }
   },
@@ -11,15 +11,15 @@
     "VirtoCommerce.Payment.Skyflow": {
       "VaultId": {
         "title": "VaultId",
-        "description": "Skyflow vault Id. You can get it in the Skyflow Studio settings"
+        "description": "Skyflow Vault-ID. Sie können diese in den Skyflow Studio-Einstellungen finden"
       },
       "VaultUrl": {
         "title": "VaultUrl",
-        "description": "Skyflow vault URL. You can get it in the Skyflow Studio settings"
+        "description": "Skyflow Vault-URL. Sie können diese in den Skyflow Studio-Einstellungen finden"
       },
       "TableName": {
         "title": "TableName",
-        "description": "Name of the table where you store card data"
+        "description": "Name der Tabelle, in der Sie Kartendaten speichern"
       }
     }
   }
