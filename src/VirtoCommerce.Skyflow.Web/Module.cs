@@ -1,10 +1,8 @@
-using GraphQL.Server;
-using MediatR;
+using GraphQL;
+using GraphQL.MicrosoftDI;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using VirtoCommerce.Xapi.Core.Extensions;
-using VirtoCommerce.Xapi.Core.Infrastructure;
 using VirtoCommerce.PaymentModule.Core.Services;
 using VirtoCommerce.Platform.Core.Modularity;
 using VirtoCommerce.Skyflow.Core;
@@ -13,6 +11,7 @@ using VirtoCommerce.Skyflow.Core.Services;
 using VirtoCommerce.Skyflow.Data.Providers;
 using VirtoCommerce.Skyflow.Data.Services;
 using VirtoCommerce.Skyflow.XApi;
+using VirtoCommerce.Xapi.Core.Extensions;
 
 namespace VirtoCommerce.Skyflow.Web;
 
@@ -23,12 +22,10 @@ public class Module : IModule, IHasConfiguration
 
     public void Initialize(IServiceCollection serviceCollection)
     {
-        var assemblyMarker = typeof(AssemblyMarker);
-        var graphQlBuilder = new CustomGraphQLBuilder(serviceCollection);
-        graphQlBuilder.AddGraphTypes(assemblyMarker);
-        serviceCollection.AddMediatR(assemblyMarker);
-        serviceCollection.AddAutoMapper(assemblyMarker);
-        serviceCollection.AddSchemaBuilders(assemblyMarker);
+        _ = new GraphQLBuilder(serviceCollection, builder =>
+        {
+            builder.AddSchema(serviceCollection, typeof(AssemblyMarker));
+        });
 
         serviceCollection.Configure<SkyflowOptions>(Configuration.GetSection("Payments:Skyflow"));
         serviceCollection.AddTransient<ISkyflowClient, SkyflowClient>();
