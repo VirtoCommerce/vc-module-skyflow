@@ -1,7 +1,9 @@
-# Integration with Skyflow
+# Virto Commerce Skyflow Module
+
 The module implements integration with [Skyflow](https://www.skyflow.com/): Data Privacy Vault service.
 
-## Key Features:
+## Key features
+
 * **Unified Credit Card User Experience:** Elevate your users' payment journey with a unified experience for credit card transactions across diverse payment providers.
 * **PCI Compliance:** Skyflow ensures PCI compliance, streamlining adherence to industry standards for secure handling of payment data.
 * **Integration with Virto Storefront:** Seamlessly integrated with [Virto Storefront](https://github.com/VirtoCommerce/vc-theme-b2b-vue) for a cohesive e-commerce experience.
@@ -19,23 +21,23 @@ The module implements integration with [Skyflow](https://www.skyflow.com/): Data
 
 ![image-20240124-131429](https://github.com/VirtoCommerce/vc-module-skyflow/assets/7639413/7bcd8edc-68fc-47ac-a13f-d38089064bdc)
 
-1. **Order Placement:**
+* **Order placement:**
   * As a customer, after adding items to my cart, I proceed to checkout.
   * Upon reaching the payment method selection page, I notice a new option: "Credit Card."
-2. **Credit Card Payment Form:**
+* **Credit card payment form:**
   * I select the "Credit Card" payment method.
   * The frontend displays a Credit Card form built with PCI compliance and Skyflow integration, maintaining the current design of the platform.
   * I enter my Credit Card details securely into the form.
-3. **Tokenization Process:**
+* **Tokenization process:**
   * Upon submission of the form, the payment process utilizes Skyflow for PCI-compliant Credit Card storage.
   * Skyflow tokenizes my Credit Card information securely.
-4. **Transaction Processing:**
+* **Transaction processing:**
   * The tokenized Credit Card information is seamlessly integrated with Payment processing through Skyflow.
   * The transaction is created successfully via Authorize.NET.
-5. **Payment Document Creation:**
+* **Payment document creation:**
   * A Payment document is automatically created within Virto Commerce Payment Processing for the Credit Card transaction.
   * This Payment document includes all necessary details for tracking and processing the transaction within the Virto Commerce platform.
-6. **Saved Credit Card:**
+* **Saved credit card:**
   * The Skyflow-generated token for Credit Card is stored within the Virto Commerce Payment document securely.
   * Virto Commerce can save the token and use later as Saved Credit Card.
 
@@ -47,11 +49,9 @@ This setup documentation provides step-by-step instructions for secure payment p
 ### Skyflow Configuration
 
 #### Import vault schema
-1. **Sign in to Skyflow Studio.**
+1. Sign in to Skyflow Studio.
 2. On the home screen with the list of vaults. Select `Add vault`-> `upload vault schema`
 3. Upload the default vault schema [vaultSchema.json](./docs/media/vaultSchema.json)
-
-
 
 #### Roles Creation
 The main security recommendation is to have two service accounts with different roles for saving and tokenizing card data in the vault and for executing outbound connections. In the next steps, create the two new roles:
@@ -163,6 +163,7 @@ Configuration example.
 
 
 ## Customization
+
 **Integration with Payment Providers:**
   * By default, the module supports Authorize.NET payment provider.
   * To integrate with multiple target  providers based on some customconditions  or implement custom orchestration:
@@ -181,12 +182,23 @@ Configuration example.
  }
   ```
 
+## Documentation
+
+* [Skyflow module user documentation](https://docs.virtocommerce.org/platform/user-guide/inventory/overview/)
+* [Skyflow module developer documentation](https://docs.virtocommerce.org/platform/developer-guide/Fundamentals/Payments/skyflow/)
+* [Payment methods configuration](https://docs.virtocommerce.org/platform/developer-guide/Configuration-Reference/appsettingsjson/#payments)
+* [REST API](https://virtostart-demo-admin.govirto.com/docs/index.html?urls.primaryName=VirtoCommerce.Skyflow)
+* [View on GitHub](https://github.com/VirtoCommerce/vc-module-skyflow)
 
 ## References
-* Documenation: https://docs.virtocommerce.org
-* Home: https://virtocommerce.com
-* Community: https://www.virtocommerce.org
 
+* [Deployment](https://docs.virtocommerce.org/platform/developer-guide/Tutorials-and-How-tos/Tutorials/deploy-module-from-source-code/)
+* [Installation](https://docs.virtocommerce.org/platform/user-guide/modules-installation/)
+* [Home](https://virtocommerce.com)
+* [Community](https://www.virtocommerce.org)
+* [Download latest release](https://github.com/VirtoCommerce/vc-module-skyflow/releases/latest)
+
+  
 ## License
 
 Copyright (c) Virto Solutions LTD.  All rights reserved.
