@@ -49,8 +49,12 @@ namespace VirtoCommerce.Skyflow.Data.Providers
                 }
             };
             var payment = (PaymentIn)request.Payment;
-            payment.PaymentStatus = PaymentStatus.Pending;
-            payment.Status = payment.PaymentStatus.ToString();
+
+            if (payment != null)
+            {
+                payment.PaymentStatus = PaymentStatus.Pending;
+                payment.Status = payment.PaymentStatus.ToString();
+            }
 
             return result;
         }
