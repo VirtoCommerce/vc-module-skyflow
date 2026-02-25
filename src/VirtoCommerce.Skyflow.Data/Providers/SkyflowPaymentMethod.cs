@@ -96,7 +96,7 @@ namespace VirtoCommerce.Skyflow.Data.Providers
             return result;
         }
 
-        public override Task<CapturePaymentRequestResult> CaptureProcessPaymentAsync(CapturePaymentRequest request, CancellationToken cancelToken = default)
+        public override Task<CapturePaymentRequestResult> CaptureProcessPaymentAsync(CapturePaymentRequest request, CancellationToken cancellationToken = default)
         {
             return Task.FromResult(new CapturePaymentRequestResult
             {
