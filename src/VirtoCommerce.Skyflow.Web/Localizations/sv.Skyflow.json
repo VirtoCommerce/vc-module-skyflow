@@ -1,0 +1,26 @@
+{
+  "payment": {
+    "labels": {
+      "SkyflowPaymentMethod": {
+        "name": "Skyflow",
+        "description": "Integration av Skyflow"
+      }
+    }
+  },
+  "settings": {
+    "VirtoCommerce.Payment.Skyflow": {
+      "VaultId": {
+        "title": "VaultId",
+        "description": "Skyflow-valv-ID. Du kan få det i Skyflow Studio-inställningarna"
+      },
+      "VaultUrl": {
+        "title": "VaultUrl",
+        "description": "Skyflow-valv-URL. Du kan få det i Skyflow Studio-inställningarna"
+      },
+      "TableName": {
+        "title": "TableName",
+        "description": "Namn på tabellen där du lagrar kortdata"
+      }
+    }
+  }
+}
