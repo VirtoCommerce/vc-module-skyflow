@@ -33,7 +33,7 @@ namespace VirtoCommerce.Skyflow.Data.Providers
             _paymentMethodsRegistrar = paymentMethodsRegistrar;
         }
 
-        public override async Task<ProcessPaymentRequestResult> ProcessPaymentAsync(ProcessPaymentRequest request, CancellationToken cancellationToken)
+        public override async Task<ProcessPaymentRequestResult> ProcessPaymentAsync(ProcessPaymentRequest request, CancellationToken cancellationToken = default)
         {
             var tokenResponse = await _skyFlowClient.GetBearerToken(_options.PaymentFormAccount);
 
@@ -66,7 +66,7 @@ namespace VirtoCommerce.Skyflow.Data.Providers
             return paymentMethod;
         }
 
-        public override async Task<PostProcessPaymentRequestResult> PostProcessPaymentAsync(PostProcessPaymentRequest request, CancellationToken cancelToken)
+        public override async Task<PostProcessPaymentRequestResult> PostProcessPaymentAsync(PostProcessPaymentRequest request, CancellationToken cancellationToken = default)
         {
             var paymentMethod = await GetTargetPaymentMethod(request);
 
@@ -91,11 +91,12 @@ namespace VirtoCommerce.Skyflow.Data.Providers
             request.Parameters["CreditCard"] = JsonConvert.SerializeObject(skyFlowCard);
             request.Parameters["ProxyHttpClientName"] = ModuleConstants.SkyflowHttpClientName;
             request.Parameters["ProxyEndpointUrl"] = new Uri($"{_options.GatewayUri}/v1/gateway/outboundRoutes/{_options.TargetConnectionRoute}").ToString();
-            var result = await paymentMethod.PostProcessPaymentAsync(request, cancelToken);
+
+            var result = await paymentMethod.PostProcessPaymentAsync(request, cancellationToken);
             return result;
         }
 
-        public override Task<CapturePaymentRequestResult> CaptureProcessPaymentAsync(CapturePaymentRequest context, CancellationToken cancelToken)
+        public override Task<CapturePaymentRequestResult> CaptureProcessPaymentAsync(CapturePaymentRequest request, CancellationToken cancelToken = default)
         {
             return Task.FromResult(new CapturePaymentRequestResult
             {
@@ -104,7 +105,7 @@ namespace VirtoCommerce.Skyflow.Data.Providers
             });
         }
 
-        public override Task<RefundPaymentRequestResult> RefundProcessPaymentAsync(RefundPaymentRequest context, CancellationToken cancellationToken)
+        public override Task<RefundPaymentRequestResult> RefundProcessPaymentAsync(RefundPaymentRequest request, CancellationToken cancellationToken = default)
         {
             return Task.FromResult(new RefundPaymentRequestResult
             {
@@ -113,7 +114,7 @@ namespace VirtoCommerce.Skyflow.Data.Providers
             });
         }
 
-        public override Task<ValidatePostProcessRequestResult> ValidatePostProcessRequestAsync(NameValueCollection queryString, CancellationToken cancellationToken)
+        public override Task<ValidatePostProcessRequestResult> ValidatePostProcessRequestAsync(NameValueCollection queryString, CancellationToken cancellationToken = default)
         {
             return Task.FromResult(new ValidatePostProcessRequestResult
             {
