@@ -12,7 +12,6 @@ using JWT.Builder;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using VirtoCommerce.Platform.Core.Common;
-using VirtoCommerce.Skyflow.Core;
 using VirtoCommerce.Skyflow.Core.Models;
 using VirtoCommerce.Skyflow.Core.Services;
 
@@ -87,6 +86,7 @@ public class SkyflowClient(
         {
             SkyflowId = skyflowId,
             CardNumber = tokenResult.Fields["card_number"],
+            CardType = tokenResult.Fields["card_type"],
             CardExpiration = tokenResult.Fields["card_expiration"],
             Cvv = tokenResult.Fields["cvv"],
             CardholderName = tokenResult.Fields["cardholder_name"],

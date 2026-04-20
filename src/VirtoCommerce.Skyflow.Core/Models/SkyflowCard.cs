@@ -12,6 +12,9 @@ namespace VirtoCommerce.Skyflow.Core.Models
         [JsonPropertyName("card_number")]
         public string CardNumber { get; set; }
 
+        [JsonPropertyName("card_type")]
+        public string CardType { get; set; }
+
         [JsonPropertyName("cardholder_name")]
         public string CardholderName { get; set; }
 
