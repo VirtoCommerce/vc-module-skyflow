@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -8,6 +9,8 @@ namespace VirtoCommerce.Skyflow.Core.Services
     public interface ISkyflowClient
     {
         Task<SkyflowBearerTokenResponse> GetBearerToken(SkyflowServiceAccountOptions serviceAccountOptions);
+        Task<HttpResponseMessage> InvokeRoute(HttpMethod method, string route, Dictionary<string, string> headers, HttpContent content, bool inbound = false);
+        [Obsolete("This method is obsolete. Use InvokeRoute instead.")]
         Task<HttpResponseMessage> InvokeConnection(HttpMethod method, string route, Dictionary<string, string> headers, HttpContent content);
         Task<SkyflowCard> GetCard(string skyflowId, object callParams = null);
         Task<IEnumerable<SkyflowCard>> GetAllSavedUserCards(string userId);
