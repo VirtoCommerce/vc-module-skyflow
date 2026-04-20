@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
@@ -32,9 +33,9 @@ namespace VirtoCommerce.Skyflow.Data.Providers
             _paymentMethodsRegistrar = paymentMethodsRegistrar;
         }
 
-        public override ProcessPaymentRequestResult ProcessPayment(ProcessPaymentRequest request)
+        public override async Task<ProcessPaymentRequestResult> ProcessPaymentAsync(ProcessPaymentRequest request, CancellationToken cancellationToken = default)
         {
-            var tokenResponse = _skyFlowClient.GetBearerToken(_options.PaymentFormAccount).GetAwaiter().GetResult();
+            var tokenResponse = await _skyFlowClient.GetBearerToken(_options.PaymentFormAccount);
 
             var result = new ProcessPaymentRequestResult
             {
@@ -55,14 +56,9 @@ namespace VirtoCommerce.Skyflow.Data.Providers
             return result;
         }
 
-        public override PostProcessPaymentRequestResult PostProcessPayment(PostProcessPaymentRequest request)
-        {
-            return PostProcessPaymentAsync(request).GetAwaiter().GetResult();
-        }
-
         protected virtual async Task<PaymentMethod> GetTargetPaymentMethod(PostProcessPaymentRequest request)
         {
-            var paymentMethod = (await _paymentMethodsRegistrar.GetRegisteredPaymentMethods()).FirstOrDefault(x => x.TypeName.EqualsInvariant(_options.TargetPaymentMethod));
+            var paymentMethod = (await _paymentMethodsRegistrar.GetRegisteredPaymentMethods()).FirstOrDefault(x => x.TypeName.EqualsIgnoreCase(_options.TargetPaymentMethod));
             if (paymentMethod == null)
             {
                 throw new OperationCanceledException("Payment method not found. Please check the Payments:Skyflow:TargetPaymentMethod setting");
@@ -70,7 +66,7 @@ namespace VirtoCommerce.Skyflow.Data.Providers
             return paymentMethod;
         }
 
-        private async Task<PostProcessPaymentRequestResult> PostProcessPaymentAsync(PostProcessPaymentRequest request)
+        public override async Task<PostProcessPaymentRequestResult> PostProcessPaymentAsync(PostProcessPaymentRequest request, CancellationToken cancellationToken = default)
         {
             var paymentMethod = await GetTargetPaymentMethod(request);
 
@@ -95,31 +91,35 @@ namespace VirtoCommerce.Skyflow.Data.Providers
             request.Parameters["CreditCard"] = JsonConvert.SerializeObject(skyFlowCard);
             request.Parameters["ProxyHttpClientName"] = ModuleConstants.SkyflowHttpClientName;
             request.Parameters["ProxyEndpointUrl"] = new Uri($"{_options.GatewayUri}/v1/gateway/outboundRoutes/{_options.TargetConnectionRoute}").ToString();
-            var result = paymentMethod.PostProcessPayment(request);
+
+            var result = await paymentMethod.PostProcessPaymentAsync(request, cancellationToken);
             return result;
         }
 
-        public override VoidPaymentRequestResult VoidProcessPayment(VoidPaymentRequest request)
+        public override Task<CapturePaymentRequestResult> CaptureProcessPaymentAsync(CapturePaymentRequest request, CancellationToken cancellationToken = default)
         {
-            throw new NotImplementedException();
+            return Task.FromResult(new CapturePaymentRequestResult
+            {
+                IsSuccess = true,
+                NewPaymentStatus = PaymentStatus.Paid
+            });
         }
 
-        public override CapturePaymentRequestResult CaptureProcessPayment(CapturePaymentRequest context)
+        public override Task<RefundPaymentRequestResult> RefundProcessPaymentAsync(RefundPaymentRequest request, CancellationToken cancellationToken = default)
         {
-            return new CapturePaymentRequestResult { IsSuccess = true, NewPaymentStatus = PaymentStatus.Paid };
+            return Task.FromResult(new RefundPaymentRequestResult
+            {
+                IsSuccess = true,
+                NewRefundStatus = RefundStatus.Processed
+            });
         }
 
-        public override RefundPaymentRequestResult RefundProcessPayment(RefundPaymentRequest context)
+        public override Task<ValidatePostProcessRequestResult> ValidatePostProcessRequestAsync(NameValueCollection queryString, CancellationToken cancellationToken = default)
         {
-            return new RefundPaymentRequestResult { IsSuccess = true, NewRefundStatus = RefundStatus.Processed };
-        }
-
-        public override ValidatePostProcessRequestResult ValidatePostProcessRequest(NameValueCollection queryString)
-        {
-            return new ValidatePostProcessRequestResult
+            return Task.FromResult(new ValidatePostProcessRequestResult
             {
                 IsSuccess = true
-            };
+            });
         }
 
         public override PaymentMethodType PaymentMethodType => PaymentMethodType.PreparedForm;

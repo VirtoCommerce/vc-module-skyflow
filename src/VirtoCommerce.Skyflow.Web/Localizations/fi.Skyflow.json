@@ -1,0 +1,26 @@
+{
+  "payment": {
+    "labels": {
+      "SkyflowPaymentMethod": {
+        "name": "Skyflow",
+        "description": "Skyflow-integraatio"
+      }
+    }
+  },
+  "settings": {
+    "VirtoCommerce.Payment.Skyflow": {
+      "VaultId": {
+        "title": "VaultId",
+        "description": "Skyflow-valtin ID. Voit hakea sen Skyflow Studio -asetuksista"
+      },
+      "VaultUrl": {
+        "title": "VaultUrl",
+        "description": "Skyflow-valtin URL. Voit hakea sen Skyflow Studio -asetuksista"
+      },
+      "TableName": {
+        "title": "TableName",
+        "description": "Taulu, johon korttidata tallennetaan"
+      }
+    }
+  }
+}
