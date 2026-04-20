@@ -87,6 +87,7 @@ public class SkyflowClient(
             SkyflowId = skyflowId,
             CardNumber = tokenResult.Fields["card_number"],
             CardType = tokenResult.Fields["card_type"],
+            CardScheme = tokenResult.Fields["card_scheme"],
             CardExpiration = tokenResult.Fields["card_expiration"],
             Cvv = tokenResult.Fields["cvv"],
             CardholderName = tokenResult.Fields["cardholder_name"],
