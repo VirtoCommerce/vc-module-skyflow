@@ -9,6 +9,8 @@ public class SkyflowCardType : ExtendableGraphType<SkyflowCard>
     {
         Field(x => x.CardExpiration, nullable: true);
         Field(x => x.CardNumber);
+        Field(x => x.CardType, nullable: true);
+        Field(x => x.CardScheme, nullable: true);
         Field(x => x.CardholderName, nullable: true);
         Field(x => x.Cvv, nullable: true);
         Field(x => x.ExpiryMonth, nullable: true);

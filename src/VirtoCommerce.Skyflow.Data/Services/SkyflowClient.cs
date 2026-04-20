@@ -12,7 +12,6 @@ using JWT.Builder;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using VirtoCommerce.Platform.Core.Common;
-using VirtoCommerce.Skyflow.Core;
 using VirtoCommerce.Skyflow.Core.Models;
 using VirtoCommerce.Skyflow.Core.Services;
 
@@ -52,11 +51,11 @@ public class SkyflowClient(
         return result.Deleted;
     }
 
-    public async Task<HttpResponseMessage> InvokeConnection(HttpMethod method, string route, Dictionary<string, string> headers, HttpContent content)
+    public async Task<HttpResponseMessage> InvokeRoute(HttpMethod method, string route, Dictionary<string, string> headers, HttpContent content, bool inbound = false)
     {
         ArgumentNullException.ThrowIfNull(route);
         route = route.TrimStart('/');
-        var request = new HttpRequestMessage(method, new Uri($"{_options.GatewayUri}/v1/gateway/outboundRoutes/{route}"))
+        var request = new HttpRequestMessage(method, new Uri($"{_options.GatewayUri}/v1/gateway/{(inbound ? "inboundRoutes": "outboundRoutes")}/{route}"))
         {
             Content = content
         };
@@ -66,6 +65,11 @@ public class SkyflowClient(
         }
         var response = await Send(request, useConnectionAuthHeader: true);
         return response;
+    }
+
+    public Task<HttpResponseMessage> InvokeConnection(HttpMethod method, string route, Dictionary<string, string> headers, HttpContent content)
+    {
+        return InvokeRoute(method, route, headers, content, false);
     }
 
     public async Task<SkyflowCard> GetCard(string skyflowId, object callParams = null)
@@ -82,6 +86,8 @@ public class SkyflowClient(
         {
             SkyflowId = skyflowId,
             CardNumber = tokenResult.Fields["card_number"],
+            CardType = tokenResult.Fields["card_type"],
+            CardScheme = tokenResult.Fields["card_scheme"],
             CardExpiration = tokenResult.Fields["card_expiration"],
             Cvv = tokenResult.Fields["cvv"],
             CardholderName = tokenResult.Fields["cardholder_name"],
@@ -222,5 +228,6 @@ public class SkyflowClient(
             .Replace("\n", "").Replace("\\n", "").Replace(" ", "");
         return result;
     }
+
 
 }
