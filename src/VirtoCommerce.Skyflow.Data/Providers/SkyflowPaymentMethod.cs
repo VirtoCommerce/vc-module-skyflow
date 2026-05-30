@@ -49,9 +49,11 @@ namespace VirtoCommerce.Skyflow.Data.Providers
                     {"tableName", _options.TableName}
                 }
             };
-            var payment = (PaymentIn)request.Payment;
-            payment.PaymentStatus = PaymentStatus.Pending;
-            payment.Status = payment.PaymentStatus.ToString();
+            if (request.Payment is PaymentIn payment)
+            {
+                payment.PaymentStatus = PaymentStatus.Pending;
+                payment.Status = payment.PaymentStatus.ToString();
+            }
 
             return result;
         }
@@ -122,6 +124,7 @@ namespace VirtoCommerce.Skyflow.Data.Providers
             });
         }
 
+        public override bool AllowCartPayment => true;
         public override PaymentMethodType PaymentMethodType => PaymentMethodType.PreparedForm;
         public override PaymentMethodGroupType PaymentMethodGroupType => PaymentMethodGroupType.Alternative;
     }
