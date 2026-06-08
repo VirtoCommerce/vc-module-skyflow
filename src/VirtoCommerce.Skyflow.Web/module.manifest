@@ -22,7 +22,7 @@
   </owners>
 
   <projectUrl>https://github.com/VirtoCommerce/vc-module-skyflow</projectUrl>
-  <iconUrl>Modules/$(VirtoCommerce.Skyflow)/Content/logo.png</iconUrl>
+  <iconUrl>Modules/$(VirtoCommerce.Skyflow)/Content/logo.svg</iconUrl>
   <requireLicenseAcceptance>false</requireLicenseAcceptance>
 
   <assemblyFile>VirtoCommerce.Skyflow.Web.dll</assemblyFile>
