@@ -1,16 +1,19 @@
+using System;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
-using VirtoCommerce.Xapi.Core.BaseQueries;
 using VirtoCommerce.Skyflow.XApi.Schemas;
+using VirtoCommerce.Xapi.Core.BaseQueries;
 
 namespace VirtoCommerce.Skyflow.XApi.Queries;
 
-public class SkyflowCardQueryBuilder : QueryBuilder<SkyflowCardQuery, SkyflowCardResponse, SkyflowCardResponseType>
+public class SkyflowCardQueryBuilder(IAuthorizationService authorizationService)
+    : QueryBuilder<SkyflowCardQuery, SkyflowCardResponse, SkyflowCardResponseType>(authorizationService)
 {
-    protected override string Name => "SkyflowCards";
-
+    [Obsolete("Use the constructor without IMediator. The mediator is resolved from context.RequestServices per request.", DiagnosticId = "VC0015", UrlFormat = "https://docs.virtocommerce.org/products/products-virto3-versions")]
     public SkyflowCardQueryBuilder(IMediator mediator, IAuthorizationService authorizationService)
-        : base(mediator, authorizationService)
+        : this(authorizationService)
     {
     }
+
+    protected override string Name => "SkyflowCards";
 }
