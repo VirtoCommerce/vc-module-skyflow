@@ -12,6 +12,7 @@ using VirtoCommerce.Skyflow.Data.Providers;
 using VirtoCommerce.Skyflow.Data.Services;
 using VirtoCommerce.Skyflow.XApi;
 using VirtoCommerce.Xapi.Core.Extensions;
+using VirtoCommerce.Xapi.Core.Infrastructure;
 
 namespace VirtoCommerce.Skyflow.Web;
 
@@ -26,6 +27,7 @@ public class Module : IModule, IHasConfiguration
         {
             builder.AddSchema(serviceCollection, typeof(AssemblyMarker));
         });
+        serviceCollection.AddSingleton<ScopedSchemaFactory<AssemblyMarker>>();
 
         serviceCollection.Configure<SkyflowOptions>(Configuration.GetSection("Payments:Skyflow"));
         serviceCollection.AddTransient<ISkyflowClient, SkyflowClient>();
@@ -38,6 +40,8 @@ public class Module : IModule, IHasConfiguration
 
     public void PostInitialize(IApplicationBuilder appBuilder)
     {
+        appBuilder.UseScopedSchema<AssemblyMarker>("skyflow");
+
         var paymentMethodsRegistrar = appBuilder.ApplicationServices.GetRequiredService<IPaymentMethodsRegistrar>();
         paymentMethodsRegistrar.RegisterPaymentMethod(() => appBuilder.ApplicationServices.GetService<SkyflowPaymentMethod>());
     }
