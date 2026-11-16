@@ -9,7 +9,7 @@
   <ItemGroup>
     <PackageReference Include="JWT" Version="11.0.0" />
     <PackageReference Include="Microsoft.Extensions.Http" Version="10.0.3" />
-    <PackageReference Include="VirtoCommerce.Platform.Data" Version="3.1002.0" />
+    <PackageReference Include="VirtoCommerce.Platform.Data" Version="3.1097.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\VirtoCommerce.Skyflow.Core\VirtoCommerce.Skyflow.Core.csproj" />
